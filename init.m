@@ -1,5 +1,6 @@
 SetOptions[$Output,PageWidth -> 110]
 DeclarePackage["Frechet`", {"Frechet"}]
+DeclarePackage["Puiseux`", {"Puiseux"}]
 DeclarePackage["Tr`", {"Tr"}]
 DeclarePackage["Taylor`", {"Taylor", "TaylorCoeff", "TotalDegree", 
 	"InitialForm", "TaylorCompress"}] 
