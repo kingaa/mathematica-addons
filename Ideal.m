@@ -5,7 +5,7 @@ BeginPackage["Ideal`", {"Taylor`"}]
 Unprotect[MultiIndices, Monomials, IdealSum, IdealProduct, IdealQuotient, 
 	IdealIntersection, Saturation, Homogeneize, Dehomogeneize, GeneralPolynomial, 
 	StandardBasis, SeriesReduce, TangentCone, BlockDiagonal, 
-	GrevLex, GrLex, Elim, Lex]
+	GrevLex, GrLex, Elim, Lex, Discriminant]
 
 MultiIndices::usage = "MultiIndices[k, n] gives the list of\
 	 n-dimensional multi-indices of order k."
@@ -69,6 +69,9 @@ Elim::usage = "Elim[k,n] gives an n x n weight matrix for the k-th elimination\
 	order."
 
 Lex::usage = "Lex[n] gives an n x n weight matrix for the lexicographical order."
+
+Discriminant::usage = "Discriminant[f,x] gives the discriminant of the polynomial\
+	f in variable x."
 
 Begin["Private`"]
 
@@ -246,11 +249,18 @@ addLex[n_Integer, opts___] := Module[
 	Sequence @@ ({opts} /. (Rule[MonomialOrder, z_] :> Rule[MonomialOrder,weight]))
 ]
 
+Discriminant[f_, x_] := Module[
+	{n = Exponent[f,x]},
+	Expand[
+		(-1)^(n+1) Resultant[f, D[f,x], x] / Coefficient[f, x, n]
+	]
+]
+
 End[ ]
 
 Protect[MultiIndices, Monomials, IdealSum, IdealProduct, IdealQuotient, 
 	IdealIntersection, Saturation, Homogeneize, Dehomogeneize, GeneralPolynomial, 
 	StandardBasis, SeriesReduce, TangentCone, BlockDiagonal, 
-	GrevLex, GrLex, Elim, Lex]
+	GrevLex, GrLex, Elim, Lex, Discriminant]
 
 EndPackage[ ]
