@@ -2,7 +2,7 @@
 
 BeginPackage["Taylor`"]
 
-Unprotect[TotalDegree, Taylor, TaylorCoeff, InitialForm, Grading, TaylorCompress]
+Unprotect[TotalDegree, Taylor, TaylorCoeff, InitialForm, Grading, TaylorCompress, ImplicitSolve]
 
 TotalDegree::usage = "TotalDegree[expr, vars] gives the total degree\
 	 of the polynomial expression expr in the variables vars.\
@@ -35,6 +35,18 @@ TaylorCompress::usage = "TaylorCompress[expr, vars, n, a] gives the\
 Taylor::badgr = "`1` does not grade the monomials in variables `2`."
 
 Taylor::badp  = "Incommensurate dimensions in Taylor."
+
+ImplicitSolve::usage = "Given an expression f(x,vars), where vars is a
+list of variables, such that f(0,0,...,0) = 0, ImplicitSolve[f, x,
+vars, n] uses the implicit function theorem to return the n-th Taylor
+polynomial of the unique solution of f == 0.  Thus Taylor[f(x,y,z)
+/. ImplicitSolve[f,x,{y,z},3], {y,z}, 3] == 0."
+
+ImplicitSolve::sing = "Singular Jacobian in ImplicitSolve.  A unique
+solution is not guaranteed to exist."
+
+ImplicitSolve::nobranch = "No branch of the solution passes through
+the origin."
 
 Begin["Private`"]
 
@@ -181,8 +193,30 @@ multiIndices[order_Integer/;(order > 0), n_Integer/;(n > 1)] := Apply[
 	]
 ]
 
+ImplicitSolve[f_, x_, vars_List, n_Integer] := Module[
+	{m = Length[vars], eqn, g, clist, xvars}, 
+	g = f /. x -> 0 /. Thread[vars -> 0];
+	If[
+		Not[ g == 0 ],
+		Message[ImplicitSolve::nobranch];
+		Return[$Failed]
+	];
+	If[
+		Coefficient[f /. Thread[vars] -> 0, x, 1] == 0,
+		Message[ImplicitSolve::sing];
+		Return[$Failed]
+	];
+	eqn = Taylor[f /. x -> x @@ vars, vars, n] /. x @@ Array[0&, m] -> 0; 
+	g = Taylor[x @@ vars, vars, n] /. x @@ Array[0&, m] -> 0; 
+	clist = Flatten[CoefficientList[eqn, vars]]; 
+	xvars = Cases[Variables[g], Derivative[__][x][__]]; 
+	g = g /. Solve[Thread[clist == 0], xvars]; 
+	Return[Thread[x -> g]]
+]
+
+
 End[ ]
 
-Protect[TotalDegree, Taylor, TaylorCoeff, InitialForm, Grading, TaylorCompress]
+Protect[TotalDegree, Taylor, TaylorCoeff, InitialForm, Grading, TaylorCompress, ImplicitSolve]
 
 EndPackage[ ]
