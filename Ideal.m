@@ -252,7 +252,7 @@ addLex[n_Integer, opts___] := Module[
 Discriminant[f_, x_] := Module[
 	{n = Exponent[f,x]},
 	Expand[
-		(-1)^(n+1) Resultant[f, D[f,x], x] / Coefficient[f, x, n]
+		(-1)^(n (n-1)/2) Resultant[f, D[f,x], x] / Coefficient[f, x, n]
 	]
 ]
 
