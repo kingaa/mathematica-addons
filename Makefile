@@ -1,4 +1,5 @@
 INSTALLDIR = $(HOME)/.Mathematica/Applications
+PUBLISHDIR = $(HOME)/www-home/pub/math/
 
 CC = gcc
 CFLAGS = -O2 -I. -Wall -static
@@ -9,10 +10,14 @@ TAR = tar
 TARFLAGS = zcvf
 CP = cp
 INSTALL = install
-PACKAGES = Banzhaf.m BifCurve.m Frechet.m Ideal.m NormalForm.m	\
-Puiseux.m RatSimp.m Taylor.m WriteBin.m
+PACKAGES = BifCurve.m Frechet.m Ideal.m NormalForm.m Puiseux.m	\
+Taylor.m WriteBin.m
 
 unpack: $(PACKAGES) init.m README
+
+publish: $(PACKAGES) init.m README
+	$(INSTALL) -m0644 $^ $(PUBLISHDIR)
+	cd $(PUBLISHDIR); sh publish.sh
 
 install: $(PACKAGES)
 	 $(INSTALL) -m0444 $(PACKAGES) $(INSTALLDIR)
@@ -24,25 +29,14 @@ init: init.m
 dist: unpack VERSION Makefile README math.el
 	mkdir addons-$(shell cat VERSION)
 	$(CP) Makefile $(PACKAGES) init.m README math.el addons-$(shell cat VERSION)
-	$(TAR) $(TARFLAGS) addons-$(shell cat VERSION).tgz addons-$(shell cat VERSION)
+	$(TAR) $(TARFLAGS) addons-$(shell cat VERSION).tar.gz addons-$(shell cat VERSION)
 	$(RM) -r addons-$(shell cat VERSION) VERSION
 
 VERSION:
 	$(CO) -kv $@
 
-%.tgz: %
-	$(TAR) $(TARFLAGS) $*.tgz $*
+%.tar.gz: %
+	$(TAR) $(TARFLAGS) $*.tar.gz $*
 
 %.gz: %
 	$(GZIP) < $* > $*.gz
-
-%: %.c $(INC) $(LIB)
-	$(CC) $(CFLAGS) $*.c $(LDLIBS) -o $*
-
-(%.o): %.c $(INC)
-	$(CC) -c $(CFLAGS) $*.c -o $*.o
-	$(AR) $(ARFLAGS) $@ $*.o
-	$(RM) $*.o 
-
-$(LIB):	$(LIB)($(addsuffix .o, $(basename $(SRC))))
-
