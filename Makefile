@@ -11,7 +11,7 @@ TARFLAGS = zcvf
 CP = cp
 INSTALL = install
 PACKAGES = Banzhaf.m BifCurve.m Frechet.m Ideal.m NormalForm.m	\
-Puiseux.m RatSimp.m Taylor.m Tr.m WriteBin.m
+Puiseux.m RatSimp.m Taylor.m WriteBin.m
 
 unpack: $(PACKAGES) init.m README
 
@@ -22,9 +22,9 @@ init: init.m
 	$(INSTALL) -d -m0700 $(HOME)/.Mathematica/$(MATHVERSION)/Kernel
 	$(INSTALL) -m0400 init.m $(HOME)/.Mathematica/$(MATHVERSION)/Kernel
 
-dist: unpack VERSION Makefile README
+dist: unpack VERSION Makefile README math.el
 	mkdir addons-$(shell cat VERSION)
-	$(CP) Makefile $(PACKAGES) init.m README addons-$(shell cat VERSION)
+	$(CP) Makefile $(PACKAGES) init.m README math.el addons-$(shell cat VERSION)
 	$(TAR) $(TARFLAGS) addons-$(shell cat VERSION).tgz addons-$(shell cat VERSION)
 	$(RM) -r addons-$(shell cat VERSION) VERSION
 
