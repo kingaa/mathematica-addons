@@ -1,4 +1,4 @@
-INSTALLDIR = /usr/local/apps/mathematica/AddOns/Applications
+INSTALLDIR = $(HOME)/.Mathematica/Applications
 MATHVERSION = 3.0
 
 CC = gcc
