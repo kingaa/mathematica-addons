@@ -1,11 +1,16 @@
 (* -*- mode: math; tab-width: 3; -*- *)
+(* This is the package NormalForm for normal form analysis of vectorfields. *)
+(* Author: Aaron A. King <king at tiem dot utk dot edu> *)
+(* $Revision$ *)
+(* $Date$ *)
 
 BeginPackage["NormalForm`", {"Frechet`", "Taylor`"}]
 
 Unprotect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
 	BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
-	Jordan, VFTransform, Complexification, Realification, Exponential,
-	Generator, Semisimple, Resonance]
+	Jordan, VFTransform, Complexification, Realification, 
+	Exponential, Generator, Semisimple, Resonance]
+
 
 NormalForm::usage = "{Y,U} = NormalForm[X,vars,order] reduces the vector\
 	field X to its normal form using a Lie transform method.  It is assumed\

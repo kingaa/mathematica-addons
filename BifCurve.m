@@ -83,7 +83,7 @@ NewtRaph[F_, x0_List, varindx_List, opts___] := Module[
 		If[ TrueQ[Max[Abs[f]] > traprad], 
 			Message[NewtRaph::div]; 
 			On[LinearSolve::nosol];
-			Return[ ]
+			Return[Null]
 		];
 		If[ 
 			TrueQ[Max[Abs[dx]] < tol && Max[Abs[f]] < tol], 
@@ -112,7 +112,7 @@ FindTangent[F_, x0_List, varindx_List, h_] := Module[
 firstPoint[F_, x0_List, varindx_List, h_, opts___] := Module[
 	{x1, dx},
 	x1 = Catch[NewtRaph[F,x0, Rest[varindx], opts]];
-	If [x1 == Null, Return[ ]];
+	If [x1 == Null, Return[Null]];
 	dx = rescaleStep[h, FindTangent[F, x1, varindx, h]];
 	Return[{x1, dx, varindx}]
 ]
@@ -146,7 +146,7 @@ BifCurve[P_, x0_List, varindx_List, opts___] := Module[
 	traprad = hmax * TrapFactor /. {opts} /. Options[BifCurve];
 	window = Window /. {opts} /. Options[BifCurve];
 	z = Catch[firstPoint[P, x0, varindx, h, opts]];
-	If[ z == Null, Return[ ]];
+	If[ z == Null, Return[Null]];
 	w = { First[z] };
 	While[ TrueQ[(Abs[h] >= hmin) && (k < nsteps) && inwindow[ z[[1]], varindx, window ]],
 		z1 = Catch[nextPoint[P, z[[1]], z[[2]], resort[Rest[z]], h, opts]];
@@ -205,7 +205,7 @@ Jet[X_List, x_List, base_List, par_List, n_Integer] := Module[
 			{k},
 			If[ k > n || k < 0,
 				Message[Jet::order, n, k];
-				Null,
+				$Failed,
 				c[[k+1]]]
 			]
 	];
