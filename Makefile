@@ -1,5 +1,4 @@
 INSTALLDIR = $(HOME)/.Mathematica/Applications
-MATHVERSION = 3.0
 
 CC = gcc
 CFLAGS = -O2 -I. -Wall -static
@@ -19,8 +18,8 @@ install: $(PACKAGES)
 	 $(INSTALL) -m0444 $(PACKAGES) $(INSTALLDIR)
 
 init: init.m
-	$(INSTALL) -d -m0700 $(HOME)/.Mathematica/$(MATHVERSION)/Kernel
-	$(INSTALL) -m0400 init.m $(HOME)/.Mathematica/$(MATHVERSION)/Kernel
+	$(INSTALL) -d -m0700 $(HOME)/.Mathematica/Kernel
+	$(INSTALL) -m0400 init.m $(HOME)/.Mathematica/Kernel
 
 dist: unpack VERSION Makefile README math.el
 	mkdir addons-$(shell cat VERSION)
