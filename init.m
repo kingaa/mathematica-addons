@@ -11,7 +11,7 @@ DeclarePackage["NormalForm`", {"NormalForm", "ForwardAdjointAction",
 DeclarePackage["Ideal`", {"MultiIndices", "Monomials", "IdealSum",
 	"IdealProduct", "IdealIntersection", "Saturation", "Homogeneize", 
 	"Dehomogeneize", "GeneralPolynomial", "StandardBasis",
-	"TangentCone", "BlockDiagonal", "GrevLex", "GrLex", "Lex"}]
+	"TangentCone", "BlockDiagonal", "GrevLex", "GrLex", "Lex", "Elim"}]
 DeclarePackage["WriteBin`", {"WriteBin"}]
 DeclarePackage["Dlivr`", {"Dlivr"}]
 DeclarePackage["Graphics`ImplicitPlot`", {"ImplicitPlot"}]
