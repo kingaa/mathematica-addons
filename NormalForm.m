@@ -2,6 +2,12 @@
 
 (*
 	* $Log$
+	* Revision 1.7  1998/05/19 17:05:14  aking
+	* Replaced old NormalForm predicate with NormalFormAux.
+	* NormalForm now handles errors and options and calls NormalFormAux.
+	* Replaced Semisimple option with Form option.
+	* Replaced Private`Monomials with Private`monoms.
+	*
 	* Revision 1.6  1998/05/19 04:09:32  aking
 	* Default option is now Semisimple -> False, since this is more general.
 	* Usage messages modified to make them clearer.
@@ -28,9 +34,10 @@
 
 BeginPackage["NormalForm`", {"Frechet`", "Taylor`"}]
 
-Unprotect[NormalForm, Semisimple, ForwardAdjointAction, BackwardAdjointAction,
-	ForwardAction, BackwardAction, LieBracket, Jordan, VFTransform,
-	Complexification, Realification, Expon, Generator, ResonanceTest]
+Unprotect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
+	BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
+	Jordan, VFTransform, Complexification, Realification, Expon,
+	Generator, Semisimple, Resonance, Belitskii]
 
 NormalForm::usage = "{Y,U} = NormalForm[X,vars,order] reduces the vector\
 	field X to its normal form using a Lie transform method.  It is assumed\
@@ -40,18 +47,30 @@ NormalForm::usage = "{Y,U} = NormalForm[X,vars,order] reduces the vector\
 	U, (i.e., u = ForwardAction[vars,U,vars,order]), we have Du . X = Y o u,\
 	and, if v = BackwardAction[vars,U,vars,order], then Dv . Y = X o v."
 
-Options[NormalForm] = {Semisimple -> False, ResonanceTest -> Identity}
+Options[NormalForm] = {ResonanceTest -> Identity, Form -> Resonance}
 
 NormalForm::shape = "Incommensurate dimensions: Length[X] = `1` =!= `2` =\
 	Length[vars]."
 
-Semisimple::usage = "Semisimple is an option for NormalForm.  If the linear\
-	part of the vector field to be reduced is diagonal, Semisimple -> True\
-	is more efficient."
+NormalForm::nonres = "Vector field is not in resonance normal form."
+
+NormalForm::unrec = "Option Form -> `1` unrecognized."
 
 ResonanceTest::usage = "ResonanceTest is an option for NormalForm, which specifies\
 	a function which is applied to divisors to determine whether they should be\
 	treated as equal to zero.  The default is Identity."
+
+Form::usage = "Form is an option for NormalForm, which specifies the type\
+	of normal form desired.  NormalForm assumes that the linear part of the\
+	vector field is in Jordan normal form (see Jordan).  The default setting\
+	is Form -> Resonance, which leads to a computation of the resonance\
+	normal form in the general case.  If the linear part of the vector field\
+	is semisimple (i.e., diagonal), then Form -> Semisimple yields a more\
+	efficient computation.  The remaining option is Form -> Belitskii,\
+	whereby the Belitskii normal form is computed, assuming that the vector\
+	field is already in the resonance form.  If the linear part is diagonal,\
+	then the Belitskii form coincides with the resonance form.  If the linear\
+	part is nilpotent, then the vector field is already in resonance form."
 
 ForwardAdjointAction::usage = "ForwardAdjointAction[X,U,vars,n] computes the\
 	action of the generating vector field U upon the vector field X in variables\
@@ -113,20 +132,33 @@ Begin["Private`"]
 	using a Lie transform method.  It is assumed that the linear part of the
 	vector field X is in Jordan normal form.                                 *)
 
-NormalForm[X_List, vars_List, order_Integer, opts___] := Block[
+NormalForm[X_List, vars_List, order_Integer, opts___] := Module[
+	{lieSolve, form, zeroTest},
+	If[ Length[X] != Length[vars], 
+		Message[NormalForm::shape, Length[X], Length[vars]];
+	];
+	zeroTest = ResonanceTest /. {opts} /. Options[NormalForm];
+	form = Form /. {opts} /. Options[NormalForm];
+	If[ form == Jordan, Return[Jordan[X,vars,vars]]];
+	If[ TrueQ[form == Belitskii] && Not[resTest[X,vars]],
+		Message[NormalForm::nonres];
+		Return[$Failed]
+	];
+	lieSolve = Which[
+		TrueQ[form == Semisimple], FieldSSSolve,
+		TrueQ[form == Resonance], FieldNilSolve,
+		TrueQ[form == Belitskii], FieldBelSolve,
+		True, Message[NormalForm::unrec, form]; Return[$Failed]
+	];
+	NormalFormAux[X, vars, order, lieSolve, zeroTest]
+]
+
+NormalFormAux[X_List, vars_List, order_Integer, lieSolve_, zeroTest_] := Block[
 	{$RecursionLimit = Infinity},
-	Module[{F,Xe,A,Y,eps,lambda,lieSolve,zeroTest},
-		If[ Length[X] != Length[vars], 
-			Message[NormalForm::shape, Length[X], Length[vars]];
-		];
-		lieSolve = If[Semisimple /. {opts} /. Options[NormalForm],
-			FieldSSSolve,
-			FieldNilSolve
-		];
-		zeroTest = ResonanceTest /. {opts} /. Options[NormalForm];
+	Module[{F,Xe,Y,eps,lambda},
 		Xe = Expand[X /. Thread[vars -> eps vars]];
-		A = Coefficient[Xe, eps, 1];
-		lambda = eigenvalues[A, vars];
+		F[0,0] = Coefficient[Xe, eps, 1];
+		lambda = eigenvalues[F[0,0], vars];
 		F[0, m_Integer] := F[0,m] = m! Coefficient[Xe, eps, m+1];
 		F[i_Integer/;(i > 0), m_Integer] := F[i,m] = Expand[
 			F[i-1,m+1] + Sum[
@@ -136,7 +168,7 @@ NormalForm[X_List, vars_List, order_Integer, opts___] := Block[
 		];
 		For[ i = 0, i < order-1, i++,
 			{F[i+1,0], Y[i]} = lieSolve[
-				A, lambda,
+				F[0,0], lambda,
 				Expand[
 					F[i,1] + Sum[
 						Binomial[i,j] LieBracket[Y[j], F[i-j,0], vars],
@@ -146,10 +178,10 @@ NormalForm[X_List, vars_List, order_Integer, opts___] := Block[
 				vars, i+1, zeroTest
 			]
 		];
-		List[
+		{
 			Expand[ Sum[ F[i,0] / i!, {i,0,order-1}] ],
 			Expand[ Sum[ Y[i] / i!, {i,0,order-2}] ]
-		]
+		}
 	]
 ]
 
@@ -366,7 +398,7 @@ FieldSSSolveAux[eigs_List, a_, vars_, lambda_, zero_] :=
 
 FieldNilSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 	Module[
-		{DX = Transpose[Frechet[X,vars]], M = Monomials[deg+1,vars], 
+		{DX = Transpose[Frechet[X,vars]], M = monoms[deg+1,vars], 
 			G = F, n = Length[vars], Y, m, i, k},
 		m = Length[M];
 		For[k = n, k >= 1, k--,
@@ -393,13 +425,13 @@ FieldNilSolveAux[f_/;(f =!= 0), vars_List, eigs_List, k_Integer, zero_] :=
 		]
 	]
 
-Monomials[0, {x___}] := {1}
+monoms[0, {x___}] := {1}
 
-Monomials[order_Integer/;(order > 0), {}] := {}
+monoms[order_Integer/;(order > 0), {}] := {}
 
-Monomials[order_Integer/;(order > 0), {x_, y___}] := Flatten[
+monoms[order_Integer/;(order > 0), {x_, y___}] := Flatten[
 	Table[
-		(x^(order-k) #)& /@ Monomials[k, {y}],
+		(x^(order-k) #)& /@ monoms[k, {y}],
 		{k,0,order}
 	]
 ]
@@ -448,11 +480,18 @@ Expon[X_List, vars_List, n_Integer] := Module[
 	(NestList[Y,#,n]& /@ vars) . Table[(1 / k!), {k,0,n}]
 ]
 
+resTest[X_List, vars_List] := Module[
+	{DX = Frechet[Taylor[X,vars,1],vars], n = Length[vars], S},
+	S = Array[0&, {n,n}];
+	Do[ S[[i,i]] = DX[[i,i]], {i,1,n}];
+	And @@ (TrueQ /@ Thread[Expand[LieBracket[S . vars, X, vars]] == 0])
+]
+
 End[ ]
 
-Protect[NormalForm, Semisimple, ForwardAdjointAction,
+Protect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
 	BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
 	Jordan, VFTransform, Complexification, Realification, Expon,
-	Generator, ResonanceTest]
+	Generator, Semisimple, Resonance, Belitskii]
 
 EndPackage[ ]
