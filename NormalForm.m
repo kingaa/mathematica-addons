@@ -396,17 +396,17 @@ monoms[order_Integer/;(order > 0), {x_, y___}] := Flatten[
 
 eigenvalues[{},{}] = {}
 
-eigenvalues[{0, f___}, {_, r___}] := 
-	Prepend[eigenvalues[{f}, {r}], 0]
+eigenvalues[{0, f___}, {_, y___}] := 
+	Prepend[
+		eigenvalues[{f},{y}], 
+		0
+	]
 
-eigenvalues[{(c_:1) x_, f___}, {x_, r___}] := 
-	Prepend[eigenvalues[{f}, {r}], c]
-
-eigenvalues[{(c_:1) x_ + ___, f___}, {x_, r___}] := 
-	Prepend[eigenvalues[{f}, {r}], c]
-
-eigenvalues[{_, f___}, {x_, r___}] := 
-	Prepend[eigenvalues[{f},{r}], 0]
+eigenvalues[{f_, g___}, {x_, y___}] :=
+	Prepend[
+		eigenvalues[{g},{y}],
+		Coefficient[f,x]
+	]
 
 Grade[X_, vars_List] := Module[
 	{eps,Y},
