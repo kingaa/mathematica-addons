@@ -8,18 +8,19 @@ so I put the files in
    /usr/local/apps/mathematica/AddOns/Applications
 
 If you don't have root access, put them in another directory, such as
-   $HOME/share/math
-then set the mathematica $Path variable so the kernel can find them.
+   $HOME/.Mathematica/Applications
+then set the mathematica $Path variable so the kernel can find them
+(in version 5.0, this directory will automatically be searched).
 For example, to alert mathematica to the files in the directory
 $HOME/share/math, put the following line in the
-.Mathematica/(VERSION)/Kernel/init.m file:
+.Mathematica/Kernel/init.m file:
      $Path = Append[$Path, ToFileName[{$HomeDirectory, "share", "math"}]];
 
 In the file init.m included with this distribution is a series of
-DeclarePackage declarations which can also be put into the
-.Mathematica/(VERSION)/Kernel/init.m file to autoload the packages.
+DeclarePackage declarations which, if you wish, can also be put into
+the .Mathematica/(VERSION)/Kernel/init.m file to autoload the packages.
 
 ENJOY!
 
 Aaron King
-
+<king at tiem dot utk dot edu>
