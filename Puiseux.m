@@ -2,13 +2,13 @@
 
 BeginPackage["Puiseux`", {"FieldRat`"}]
 
-Unprotect[NewtonPolygon, Puiseux]
+Unprotect[NewtonPolygon, NewtonPowers, NPSolve]
 
-NewtonPolygon::usage = "NewtonPolygon[poly, x, y] gives the Newton Polygon\
-	of poly in x and y"
+NewtonPolygon::usage = "NewtonPolygon[poly, x, y]"
 
-Puiseux::usage = "Puiseux[poly, x, y, order] solves the polynomial equation\
-	poly(x,y) = 0 for y in terms of x by the method of Newton and Puiseux."
+NewtonPowers::usage = "NewtonPowers[poly, x, y]"
+
+NPSolve::usage = "NPSolve[poly, x, y, order]"
 
 Begin["Private`"];
 
@@ -25,7 +25,7 @@ NewtonPolygon[p_, x_, y_] := Module[
 		If[(L[[i,2]]-L[[i-1,2]])*(L[[i+1,1]]-L[[i,1]])
 			>= (L[[i+1,2]]-L[[i,2]])*(L[[i,1]]-L[[i-1,1]]), 
 		(found = True; L = Delete[L,i])])
-	    ];
+		 ];
 	    If[ L[[Length[L],2]] == L[[Length[L]-1,2]], 
 		(found = True; L = Delete[L,Length[L]])];
 	    If[ !found, Return[L] ]);
@@ -55,33 +55,27 @@ NPBlowup[p_, x_, y_] := Map[Module[
 PolySimp[f_] := FieldRat[f, NPRels, NPPars]
 
 NPShift[p_, x_, y_, n_Integer] := Module[
-	{param, sol, m, s, q, r = {}, i},
+	{param, sol, s, q, r = {}, i},
 	sol = (p /. x->0);
-(*	sol = FactorList[( sol / (y^Exponent[sol, y, Min]) //Expand)]; *)
-	sol = FactorList[ sol ];
-	For[i = 1, i <= Length[sol], i++,
-		m = Exponent[sol[[i,1]], y];		
-		If [ m == 0, Break];
-		If [ TrueQ[sol[[i,1]] == y], Break];
-		If [ m == 1,
-			param = Solve[sol[[i,1]]==0, y][[1,1,2]]
-		];
-		If [ m > 1,
-			param = Unique["k"];
-			NPPars = Prepend[NPPars, param];
-			NPRels = GroebnerBasis[
-				Append[
-					NPRels,
-					(sol[[i,1]] /. y->param)
-				], 
-				NPPars
-			]
-		];
-		s = y -> y + param;
-		q = PolySimp[(p /. s) //Expand];
-		If[ TrueQ[Expand[q /. {x -> 0, y -> 0}] == 0], 
-			If[ !TrueQ[ param == 0 ],
-				r = Append[r, NPS[s, NPResolution[q,x,y,n-1]]]
+	sol = FactorList[( sol / (y^Exponent[sol, y, Min]) //Expand)];
+	For[i = 2, i <= Length[sol], i++,
+		If[ ! NumberQ[sol[[i,1]]],
+			If [Exponent[sol[[i,1]], y] == 1, 
+				param = Part[Solve[sol[[i,1]]==0, y], 1, 1, 2],
+				param = Unique["k"];
+				NPPars = Prepend[NPPars, param];
+				NPRels = GroebnerBasis[
+					Append[
+						NPRels,
+						(sol[[i,1]] /. y->param)
+					], 
+					NPPars
+				]
+			];
+			s = y -> y + param;
+			q = PolySimp[(p /. s) //Expand];
+			If [ Expand[q /. {x->0, y->0}] == 0,
+				r = Append[r, NPS[s, NPResolution[q,x,y,n-1]]];
 			]
 		]
 	];
@@ -144,7 +138,7 @@ NPBackSolve[e_, s_, y_] := Module[
 	];
 ]
 
-Puiseux[p_, x_, y_, n_Integer] := Module[
+NPSolve[p_, x_, y_, n_Integer] := Module[
 	{q = FactorList[p], F, rels, r, s, i},
  	NPPars = {};
 	NPRels = {};
@@ -166,6 +160,6 @@ Puiseux[p_, x_, y_, n_Integer] := Module[
 
 End[ ]
 
-Protect[NewtonPolygon, Puiseux]
+Protect[NewtonPolygon, NewtonPowers, NPSolve]
 
 EndPackage[ ]
