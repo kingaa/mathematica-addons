@@ -12,7 +12,7 @@ INSTALL = install
 PACKAGES = Banzhaf.m BifCurve.m Frechet.m Ideal.m NormalForm.m	\
 Puiseux.m RatSimp.m Taylor.m Tr.m WriteBin.m
 
-unpack: $(PACKAGES) init.m
+unpack: $(PACKAGES) init.m README
 
 install: $(PACKAGES)
 	$(INSTALL) -m0444 $(PACKAGES) $(INSTALLDIR)
@@ -20,9 +20,9 @@ install: $(PACKAGES)
 init: init.m
 	$(INSTALL) -m0400 init.m $(HOME)/.Mathematica/3.0/Kernel
 
-dist: unpack VERSION Makefile
+dist: unpack VERSION Makefile README
 	mkdir addons-$(shell cat VERSION)
-	$(CP) Makefile $(PACKAGES) init.m addons-$(shell cat VERSION)
+	$(CP) Makefile $(PACKAGES) init.m README addons-$(shell cat VERSION)
 	$(TAR) $(TARFLAGS) addons-$(shell cat VERSION).tgz addons-$(shell cat VERSION)
 	$(RM) -r addons-$(shell cat VERSION) VERSION
 
