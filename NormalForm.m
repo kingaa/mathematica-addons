@@ -2,6 +2,11 @@
 
 (*
 	* $Log$
+	* Revision 1.6  1998/05/19 04:09:32  aking
+	* Default option is now Semisimple -> False, since this is more general.
+	* Usage messages modified to make them clearer.
+	* FieldNilSolve now does not use unify and listify.
+	*
 	* Revision 1.5  1998/05/18 23:25:51  aking
 	* Errors flagged by NormalForm::shape now no longer return $Failed.
 	*
@@ -35,14 +40,14 @@ NormalForm::usage = "{Y,U} = NormalForm[X,vars,order] reduces the vector\
 	U, (i.e., u = ForwardAction[vars,U,vars,order]), we have Du . X = Y o u,\
 	and, if v = BackwardAction[vars,U,vars,order], then Dv . Y = X o v."
 
-Options[NormalForm] = {Semisimple -> True, ResonanceTest -> Identity}
+Options[NormalForm] = {Semisimple -> False, ResonanceTest -> Identity}
 
 NormalForm::shape = "Incommensurate dimensions: Length[X] = `1` =!= `2` =\
 	Length[vars]."
 
 Semisimple::usage = "Semisimple is an option for NormalForm.  If the linear\
-	part of the vector field to be reduced is nonsemisimple (i.e., it has\
-	a nilpotent part) use Semisimple -> False."
+	part of the vector field to be reduced is diagonal, Semisimple -> True\
+	is more efficient."
 
 ResonanceTest::usage = "ResonanceTest is an option for NormalForm, which specifies\
 	a function which is applied to divisors to determine whether they should be\
@@ -76,12 +81,17 @@ LieBracket::usage = "LieBracket[X,Y,vars] is the Lie bracket of the vector\
 Jordan::usage = "{Y,f,g} = Jordan[X,oldvars,newvars] transforms the vector\
 	field X so that its linear part is in Jordan normal form.  Y will be the\
 	normalized vector field, f a linear change of variables such that\
-	Df . Y = X o f, and g the inverse transformation, i.e., Dg . X = Y o g."
+	Df . Y = X o f, and g the inverse transformation, i.e., Dg . X = Y o g.\
+	Put another way, (Df.Y) o g = X."
 	
 VFTransform::usage = "VFTransform[X,oldvars,f,newvars] transforms the vector\
 	field X in oldvars by the coordinate transformation f by means of direct\
 	substitution.  Thus, if Y = VFTransform[X,x,f,y], then Y = (D(f^-1).X) o f.\
-	VFTransform[X,oldvars,f,newvars,n] gives the result to order n in newvars."
+	VFTransform[X,oldvars,f,newvars,n] gives the result to order n in newvars.\
+	VFTransform[X,oldvars,f,newvars,t] should be used when the transformation\
+	f depends on the independent variable t.  Likewise,\
+	VFTransform[X,oldvars,f,newvars,t,n] gives the result of the time-dependent\
+	transformation f on the vector field X to order n."
 
 Complexification::usage = "Complexification[w,z] gives the complexifying\
 	transformation {(w + z)/2, -I (w - z)/2}, where z is to be interpreted\
@@ -251,9 +261,7 @@ BackwardAction[X_List, Y_List, vars_List, order_Integer] :=
 	]
 
 (* Generator[F,vars,order] calculates the nilpotent vector field X
-	such that the action of X upon itself gives the function F.  If
-				dF(x,e)/de = X(F(x,e),e), and 
-		X = Generator[F,x,order], then F(x,e) = G(y(x,e),e).        *)
+	such that the action of X upon the identity gives the function F.  *)
 
 Generator[f_List, vars_List, n_Integer] := Module[
 	{Y, eps, fe},
@@ -301,34 +309,34 @@ Jordan[X_List, oldvars_List, newvars_List] := Module[
 	truncated to order n in the new variables.  										*)
 
 
-VFTransform[vf_List, old_List, sub_List, new_List] := Expand[
-	Inverse[Frechet[sub,new]] . (vf /. Thread[old -> sub])
+VFTransform[X_List, old_List, sub_List, new_List] := Expand[
+	Inverse[Frechet[sub,new]] . (X /. Thread[old -> sub])
 ]
 
-VFTransform[vf_List, old_List, sub_List, new_List, order_Integer] := Module[
+VFTransform[X_List, old_List, sub_List, new_List, order_Integer] := Module[
 	{dsdx, ff, eps},
-	ff = Taylor[vf /. Thread[old -> sub], new, order];
+	ff = Taylor[X /. Thread[old -> sub], new, order];
 	dsdx = Taylor[Inverse[Frechet[sub,new]], new, order];
 	Taylor[ dsdx . ff, new, order]
 ]
 
-VFTransform[vf_List, old_List, sub_List, new_List, t_Symbol] := Expand[
-	Inverse[Frechet[sub,new]] . ((vf /. Thread[old -> sub]) - D[sub,t])
+VFTransform[X_List, old_List, sub_List, new_List, t_Symbol] := Expand[
+	Inverse[Frechet[sub,new]] . ((X /. Thread[old -> sub]) - D[sub,t])
 ]
 
-VFTransform[vf_List, old_List, sub_List, new_List, t_Symbol, order_Integer] := 
+VFTransform[X_List, old_List, sub_List, new_List, t_Symbol, order_Integer] := 
 	Module[{dsdx, ff, eps},
-		ff = Taylor[vf /. Thread[old -> sub], new, order];
+		ff = Taylor[X /. Thread[old -> sub], new, order];
 		dsdx = Taylor[Inverse[Frechet[sub,new]], new, order];
 		Taylor[
-			dsdx . ((vf /. Thread[old -> sub]) - D[sub,t]),
+			dsdx . ((X /. Thread[old -> sub]) - D[sub,t]),
 			new, order
 		]
 	]
 
 (* Solve [X,Y] + G = F in the space of homogeneous polynomial vector
 	fields, where X is a vector field of degree zero (i.e. linear) and
-	in diagonal form *)
+	in diagonal form. *)
 
 FieldSSSolve[_, eigs_List, X_List, vars_List, _, zero_] := Transpose[
 	Table[
@@ -354,30 +362,24 @@ FieldSSSolveAux[eigs_List, a_, vars_, lambda_, zero_] :=
 
 (* Solve [X,Y] + G = F in the space of homogeneous polynomial vector
 	fields, where X is a vector field of degree zero (i.e. linear) and
-	in nondiagonal Jordan normal form *)
+	in not-necessarily-diagonal Jordan normal form. *)
 
 FieldNilSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 	Module[
-		{DX = Frechet[X,vars], Y, M = Monomials[deg+1,vars], 
-			G, ad, n = Length[vars], i, k},
-		G = unify[F,n];
-		ad[f_] := ad[f] = Module[
-			{g = listify[f,n]}, 
-			unify[DX.g - Frechet[g,vars].X, n]
-		];
+		{DX = Transpose[Frechet[X,vars]], M = Monomials[deg+1,vars], 
+			G = F, n = Length[vars], Y, m, i, k},
+		m = Length[M];
 		For[k = n, k >= 1, k--,
-			For[i = 1, i <= Length[M], i++,
+			For[i = 1, i <= m, i++,
 				Y[i,k] = FieldNilSolveAux[
-					Coefficient[G, M[[i]] e[k]] M[[i]], 
+					Coefficient[G[[k]], M[[i]]] M[[i]], 
 					vars, L, k, zero
 				];
-				G = Expand[G - ad[Y[i,k] e[k]]];
+				G -= DX[[k]] Y[i,k];
+				G[[k]] += Frechet[Y[i,k],vars] . X;
 			]
 		];
-		{
-			listify[G, n],
-			listify[Sum[Sum[Y[i,k] e[k], {i,1,Length[M]}], {k,1,n}], n]
-		}
+		{G, Table[Sum[Y[i,k], {i,1,m}], {k,1,n}]}
 	]
 
 FieldNilSolveAux[0, _List, _List, _Integer, _] := 0
@@ -415,10 +417,6 @@ eigenvalues[{(c_:1) x_ + ___, f___}, {x_, r___}] :=
 
 eigenvalues[{_, f___}, {x_, r___}] := 
 	Prepend[eigenvalues[{f},{r}], 0]
-
-unify[G_List, n_Integer] := G . Array[e, n]
-
-listify[f_, n_Integer] := Coefficient[f,#]& /@ Array[e,n]
 
 Grade[X_, vars_List] := Module[
 	{eps,Y},
