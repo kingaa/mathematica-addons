@@ -1,50 +1,5 @@
 (* -*- mode: math; tab-width: 3; -*- *)
 
-(*
-	* $Log$
-	* Revision 1.11  2000/08/30 19:57:47  aking
-	* fixed Expon and replaced with Exponential
-	*
-	* Revision 1.10  1998/11/30 23:12:07  aking
-	* Removed Belitskii options.
-	*
-	* Revision 1.9  1998/05/20 05:31:20  aking
-	* Still working on FieldBelSolve.
-	*
-	* Revision 1.8  1998/05/19 21:31:17  aking
-	* Added FieldBelSolve predicate in preliminary form.
-	* Some cosmetic changes.
-	*
-	* Revision 1.7  1998/05/19 17:05:14  aking
-	* Replaced old NormalForm predicate with NormalFormAux.
-	* NormalForm now handles errors and options and calls NormalFormAux.
-	* Replaced Semisimple option with Form option.
-	* Replaced Private`Monomials with Private`monoms.
-	*
-	* Revision 1.6  1998/05/19 04:09:32  aking
-	* Default option is now Semisimple -> False, since this is more general.
-	* Usage messages modified to make them clearer.
-	* FieldNilSolve now does not use unify and listify.
-	*
-	* Revision 1.5  1998/05/18 23:25:51  aking
-	* Errors flagged by NormalForm::shape now no longer return $Failed.
-	*
-	* Revision 1.4  1998/05/18 18:36:14  aking
-	* Minor cosmetic modifications.
-	*
-	* Revision 1.3  1998/05/18 17:42:25  aking
-	* Removed FunctionNormalForm, which appears to be trivial anyway.
-	* Added error handling messages: NormalForm::shape, to all of the
-	* Lie Series predicates.
-	*
-	* Revision 1.2  1998/05/14 17:23:35  aking
-	* Minor cosmetic modifications.
-	*
-	* Revision 1.1  1998/04/27 04:33:45  aking
-	* Initial revision
-	*
-*)
-
 BeginPackage["NormalForm`", {"Frechet`", "Taylor`"}]
 
 Unprotect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
@@ -176,7 +131,7 @@ NormalFormAux[X_List, vars_List, order_Integer, lieSolve_, zeroTest_] := Block[
 					F[i,1] + Sum[
 						Binomial[i,j] LieBracket[Y[j], F[i-j,0], vars],
 						{j,0,i-1}
-					],
+					]
 				],
 				vars, i+1, zeroTest
 			]
@@ -498,3 +453,4 @@ Protect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
 	Generator, Semisimple, Resonance]
 
 EndPackage[ ]
+
