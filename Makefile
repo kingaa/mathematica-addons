@@ -1,4 +1,5 @@
 INSTALLDIR = /usr/local/apps/mathematica/AddOns/Applications
+MATHVERSION = 3.0
 
 CC = gcc
 CFLAGS = -O2 -I. -Wall -static
@@ -15,10 +16,11 @@ Puiseux.m RatSimp.m Taylor.m Tr.m WriteBin.m
 unpack: $(PACKAGES) init.m README
 
 install: $(PACKAGES)
-	$(INSTALL) -m0444 $(PACKAGES) $(INSTALLDIR)
+	 $(INSTALL) -m0444 $(PACKAGES) $(INSTALLDIR)
 
 init: init.m
-	$(INSTALL) -m0400 init.m $(HOME)/.Mathematica/3.0/Kernel
+	$(INSTALL) -d -m0700 $(HOME)/.Mathematica/$(MATHVERSION)/Kernel
+	$(INSTALL) -m0400 init.m $(HOME)/.Mathematica/$(MATHVERSION)/Kernel
 
 dist: unpack VERSION Makefile README
 	mkdir addons-$(shell cat VERSION)
