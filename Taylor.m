@@ -26,7 +26,7 @@ Grading::usage = "Grading is an option for Taylor, TotalDegree,\
 
 TaylorCompress::usage = "TaylorCompress[expr, vars, n, a] gives the\
 	Taylor polynomial of expr in the variables vars to order n in terms\
-	of unspecified coefficients with head a.  a[i,j,k,...] is the\
+	of unspecified coefficients with head a.  a[i,{j,k,...}] is the\
 	coefficient of Inner[Power,vars,{j,k,...},Times] in the Taylor\
 	polynomial of expr[[i]]."
 
@@ -114,11 +114,12 @@ TaylorCompress[e_List, x_List, n_Integer, a_, opts___] := Module[
 		For[k = 1, k <= Length[mi], k++,
 			t = Together[TaylorCoeff[f, x, mi[[k]]]];
 			For[i = 1, i <= m, i++,
-				If[
-					t[[i]] =!= 0,
-					s = a[i,mi[[k]]];
-					g[[i]] += s Inner[Power, x, mi[[k]], Times];
-					arules = Append[arules, s -> t[[i]]],
+				If[ t[[i]] =!= 0,
+					(
+						s = a[i,mi[[k]]];
+						g[[i]] += s Inner[Power, x, mi[[k]], Times];
+						arules = Append[arules, s -> t[[i]]]
+					),
 					arules = Append[arules, s -> 0]
 				]
 			]
