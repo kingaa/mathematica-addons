@@ -2,6 +2,9 @@
 
 (*
 	* $Log$
+	* Revision 1.9  1998/05/20 05:31:20  aking
+	* Still working on FieldBelSolve.
+	*
 	* Revision 1.8  1998/05/19 21:31:17  aking
 	* Added FieldBelSolve predicate in preliminary form.
 	* Some cosmetic changes.
@@ -58,7 +61,7 @@ NormalForm::shape = "Incommensurate dimensions: Length[X] = `1` =!= `2` =\
 
 NormalForm::nonres = "Vector field is not in resonance normal form."
 
-NormalForm::unrec = "Option Form -> `1` unrecognized."
+NormalForm::unrec = "Option `1` -> `2` unrecognized."
 
 ResonanceTest::usage = "ResonanceTest is an option for NormalForm, which specifies\
 	a function which is applied to divisors to determine whether they should be\
@@ -143,7 +146,6 @@ NormalForm[X_List, vars_List, order_Integer, opts___] := Module[
 	];
 	zeroTest = ResonanceTest /. {opts} /. Options[NormalForm];
 	form = Form /. {opts} /. Options[NormalForm];
-	If[ form == Jordan, Return[Jordan[X,vars,vars]]];
 	If[ TrueQ[form == Belitskii] && Not[resTest[X,vars]],
 		Message[NormalForm::nonres];
 		Return[$Failed]
@@ -152,7 +154,7 @@ NormalForm[X_List, vars_List, order_Integer, opts___] := Module[
 		TrueQ[form == Semisimple], FieldSSSolve,
 		TrueQ[form == Resonance], FieldNilSolve,
 		TrueQ[form == Belitskii], FieldBelSolve,
-		True, Message[NormalForm::unrec, form]; Return[$Failed]
+		True, Message[NormalForm::unrec, Form, form]; Return[$Failed]
 	];
 	NormalFormAux[X, vars, order, lieSolve, zeroTest]
 ]
@@ -435,14 +437,14 @@ FieldNilSolveAux[f_/;(f =!= 0), vars_List, eigs_List, k_Integer, zero_] :=
 
 FieldBelSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 	Module[
-		{DX = Transpose[Frechet[X,vars]], M = monoms[deg+1,vars], 
-			G = F, Y, m, n},
+		{DX = Transpose[Frechet[X,vars]], M = monoms[deg+1,Reverse[vars]], 
+			G = F, Y, m, n, i, k},
 		n = Length[vars]; m = Length[M];
-		For[k = 1, k <= n, k++,
-			For[i = m, i >= 1, i--,
+		For[k = n, k >= 1, k--,
+			For[i = 1, i < m, i++,
 				Y[i,k] = FieldBelSolveAux[
 					Coefficient[G[[k]], M[[i]]] M[[i]], 
-					vars, L, k, zero
+					vars, M[[i-1]], k, zero
 				];
 				G -= DX[[k]] Y[i,k];
 				G[[k]] += Frechet[Y[i,k],vars] . X;
@@ -451,14 +453,15 @@ FieldBelSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 		{G, Table[Sum[Y[i,k], {i,1,m}], {k,1,n}]}
 	]
 
-FieldBelSolveAux[0, _List, _List, _Integer, _] := 0
+FieldBelSolveAux[0, _List, _, _Integer, _] := 0
 
-FieldBelSolveAux[f_/;(f =!= 0), vars_List, eigs_List, k_Integer, zero_] := 
-	Module[{divisor = 0},
+FieldBelSolveAux[f_/;(f =!= 0), vars_List, m_, k_Integer, zero_] := 
+	Module[{divisor},
+		divisor = Exponent[f,vars[[k]]];
 		If[ zero[divisor] == 0,
 			0,
-			f/divisor,
-			f/divisor
+			m/divisor,
+			m/divisor
 		]
 	]
 
