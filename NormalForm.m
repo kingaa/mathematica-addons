@@ -2,6 +2,9 @@
 
 (*
 	* $Log$
+	* Revision 1.2  1998/05/14 17:23:35  aking
+	* Minor cosmetic modifications.
+	*
 	* Revision 1.1  1998/04/27 04:33:45  aking
 	* Initial revision
 	*
@@ -367,21 +370,21 @@ FieldNilSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 			G, ad, n = Length[vars], i, k},
 		G = unify[F,n];
 		ad[f_] := ad[f] = Module[
-			{g = lstfy[f,n]}, 
+			{g = listify[f,n]}, 
 			unify[DX.g - Frechet[g,vars].X, n]
 		];
 		For[k = n, k >= 1, k--,
 			For[i = 1, i <= Length[C], i++,
 				Y[i,k] = diagSolve[
-					Coefficient[G,C[[i]] e[k]] C[[i]], 
+					Coefficient[G, C[[i]] e[k]] C[[i]], 
 					vars, L, k, zero
 				];
 				G = Expand[G - ad[Y[i,k] e[k]]];
 			]
 		];
 		{
-			lstfy[G, n],
-			lstfy[Sum[Sum[Y[i,k] e[k], {i,1,Length[C]}], {k,1,n}], n]
+			listify[G, n],
+			listify[Sum[Sum[Y[i,k] e[k], {i,1,Length[C]}], {k,1,n}], n]
 		}
 	]
 
@@ -425,7 +428,7 @@ FunctionNilSolve[X_List, L_List, F_List, vars_List, deg_Integer] :=
 			G, ad, n = Length[vars], i, k},
 		G = unify[F,n];
 		ad[f_] := ad[f] = Module[
-			{g = lstfy[f,n]}, 
+			{g = listify[f,n]}, 
 			unify[DX.g, n]
 		];
 		For[k = n, k >= 1, k--,
@@ -438,8 +441,8 @@ FunctionNilSolve[X_List, L_List, F_List, vars_List, deg_Integer] :=
 			]
 		];
 		{
-			lstfy[G, n],
-			lstfy[Sum[Sum[Y[i,k] e[k], {i,1,Length[C]}], {k,1,n}], n]
+			listify[G, n],
+			listify[Sum[Sum[Y[i,k] e[k], {i,1,Length[C]}], {k,1,n}], n]
 		}
 	]
 
@@ -481,7 +484,7 @@ eigenvalues[{_, f___}, {x_, r___}] :=
 
 unify[G_List, n_Integer] := G . Array[e, n]
 
-lstfy[f_, n_Integer] := Coefficient[f,#]& /@ Array[e,n]
+listify[f_, n_Integer] := Coefficient[f,#]& /@ Array[e,n]
 
 Grade[X_, vars_List] := Module[
 	{eps,Y},
