@@ -2,6 +2,9 @@
 
 (*
 	* $Log$
+	* Revision 1.10  1998/11/30 23:12:07  aking
+	* Removed Belitskii options.
+	*
 	* Revision 1.9  1998/05/20 05:31:20  aking
 	* Still working on FieldBelSolve.
 	*
@@ -44,7 +47,7 @@ BeginPackage["NormalForm`", {"Frechet`", "Taylor`"}]
 Unprotect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
 	BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
 	Jordan, VFTransform, Complexification, Realification, Expon,
-	Generator, Semisimple, Resonance, Belitskii]
+	Generator, Semisimple, Resonance]
 
 NormalForm::usage = "{Y,U} = NormalForm[X,vars,order] reduces the vector\
 	field X to its normal form using a Lie transform method.  It is assumed\
@@ -73,11 +76,7 @@ Form::usage = "Form is an option for NormalForm, which specifies the type\
 	is Form -> Resonance, which leads to a computation of the resonance\
 	normal form in the general case.  If the linear part of the vector field\
 	is semisimple (i.e., diagonal), then Form -> Semisimple yields a more\
-	efficient computation.  The remaining option is Form -> Belitskii,\
-	whereby the Belitskii normal form is computed, assuming that the vector\
-	field is already in the resonance form.  If the linear part is diagonal,\
-	then the Belitskii form coincides with the resonance form.  If the linear\
-	part is nilpotent, then the vector field is already in resonance form."
+	efficient computation."
 
 ForwardAdjointAction::usage = "ForwardAdjointAction[X,U,vars,n] computes the\
 	action of the generating vector field U upon the vector field X in variables\
@@ -146,14 +145,9 @@ NormalForm[X_List, vars_List, order_Integer, opts___] := Module[
 	];
 	zeroTest = ResonanceTest /. {opts} /. Options[NormalForm];
 	form = Form /. {opts} /. Options[NormalForm];
-	If[ TrueQ[form == Belitskii] && Not[resTest[X,vars]],
-		Message[NormalForm::nonres];
-		Return[$Failed]
-	];
 	lieSolve = Which[
 		TrueQ[form == Semisimple], FieldSSSolve,
 		TrueQ[form == Resonance], FieldNilSolve,
-		TrueQ[form == Belitskii], FieldBelSolve,
 		True, Message[NormalForm::unrec, Form, form]; Return[$Failed]
 	];
 	NormalFormAux[X, vars, order, lieSolve, zeroTest]
@@ -431,40 +425,6 @@ FieldNilSolveAux[f_/;(f =!= 0), vars_List, eigs_List, k_Integer, zero_] :=
 		]
 	]
 
-(* Solve [X,Y] + G = F in the space of homogeneous polynomial vector
-	fields, where X is a vector field of degree zero (i.e. linear) and
-	in not-necessarily-diagonal Jordan normal form and F is resonant. *)
-
-FieldBelSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
-	Module[
-		{DX = Transpose[Frechet[X,vars]], M = monoms[deg+1,Reverse[vars]], 
-			G = F, Y, m, n, i, k},
-		n = Length[vars]; m = Length[M];
-		For[k = n, k >= 1, k--,
-			For[i = 1, i < m, i++,
-				Y[i,k] = FieldBelSolveAux[
-					Coefficient[G[[k]], M[[i]]] M[[i]], 
-					vars, M[[i-1]], k, zero
-				];
-				G -= DX[[k]] Y[i,k];
-				G[[k]] += Frechet[Y[i,k],vars] . X;
-			]
-		];
-		{G, Table[Sum[Y[i,k], {i,1,m}], {k,1,n}]}
-	]
-
-FieldBelSolveAux[0, _List, _, _Integer, _] := 0
-
-FieldBelSolveAux[f_/;(f =!= 0), vars_List, m_, k_Integer, zero_] := 
-	Module[{divisor},
-		divisor = Exponent[f,vars[[k]]];
-		If[ zero[divisor] == 0,
-			0,
-			m/divisor,
-			m/divisor
-		]
-	]
-
 monoms[0, {x___}] := {1}
 
 monoms[order_Integer/;(order > 0), {}] := {}
@@ -520,18 +480,11 @@ Expon[X_List, vars_List, n_Integer] := Module[
 	(NestList[Y,#,n]& /@ vars) . Table[(1 / k!), {k,0,n}]
 ]
 
-resTest[X_List, vars_List] := Module[
-	{DX = Frechet[Taylor[X,vars,1],vars], n = Length[vars], S},
-	S = Array[0&, {n,n}];
-	Do[ S[[i,i]] = DX[[i,i]], {i,1,n}];
-	And @@ (TrueQ[# == 0]& /@ Expand[LieBracket[S . vars, X, vars]])
-]
-
 End[ ]
 
 Protect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
 	BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
 	Jordan, VFTransform, Complexification, Realification, Expon,
-	Generator, Semisimple, Resonance, Belitskii]
+	Generator, Semisimple, Resonance]
 
 EndPackage[ ]
