@@ -1,7 +1,8 @@
 SetOptions[$Output,PageWidth -> 110]
 DeclarePackage["Frechet`", {"Frechet"}]
 DeclarePackage["Tr`", {"Tr"}]
-DeclarePackage["Taylor`", {"Taylor", "TaylorCoeff", "TotalDegree", "InitialForm"}] 
+DeclarePackage["Taylor`", {"Taylor", "TaylorCoeff", "TotalDegree", 
+	"InitialForm", "TaylorCompress"}] 
 DeclarePackage["RatSimp`", {"RatSimp"}] 
 DeclarePackage["Puiseux`", {"Puiseux", "NewtonPolygon"}] 
 DeclarePackage["NormalForm`", {"NormalForm", "ForwardAdjointAction", 
