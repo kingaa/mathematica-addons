@@ -10,7 +10,10 @@ PACKAGES = Banzhaf.m BifCurve.m Frechet.m Ideal.m NormalForm.m	\
 Puiseux.m RatSimp.m Taylor.m Tr.m WriteBin.m
 
 install: $(PACKAGES)
-	install -m0444 $(PACKAGES) $(INSTALLDIR)
+	$(INSTALL) -m0444 $(PACKAGES) $(INSTALLDIR)
+
+init: init.m
+	$(INSTALL) -m0400 init.m $(HOME)/.Mathematica/3.0/Kernel
 
 %.tgz: %
 	$(TAR) $(TARFLAGS) $*.tgz $*
