@@ -118,7 +118,8 @@ TaylorCompress[e_List, x_List, n_Integer, a_, opts___] := Module[
 					t[[i]] =!= 0,
 					s = a[i,mi[[k]]];
 					g[[i]] += s Inner[Power, x, mi[[k]], Times];
-					arules = Append[arules, s -> t[[i]]]
+					arules = Append[arules, s -> t[[i]]],
+					arules = Append[arules, s -> 0]
 				]
 			]
 		]
