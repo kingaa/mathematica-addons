@@ -2,6 +2,9 @@
 
 (*
 	* $Log$
+	* Revision 1.4  1998/05/18 18:36:14  aking
+	* Minor cosmetic modifications.
+	*
 	* Revision 1.3  1998/05/18 17:42:25  aking
 	* Removed FunctionNormalForm, which appears to be trivial anyway.
 	* Added error handling messages: NormalForm::shape, to all of the
@@ -334,7 +337,7 @@ VFTransform[vf_List, old_List, sub_List, new_List, t_Symbol, order_Integer] :=
 
 (* Solve [X,Y] + G = F in the space of homogeneous polynomial vector
 	fields, where X is a vector field of degree zero (i.e. linear) and
-	in Jordan normal form *)
+	in diagonal form *)
 
 FieldSSSolve[_, eigs_List, X_List, vars_List, _, zero_] := Transpose[
 	Table[
@@ -358,9 +361,13 @@ FieldSSSolveAux[eigs_List, a_, vars_, lambda_, zero_] :=
 		]
 	]
 
+(* Solve [X,Y] + G = F in the space of homogeneous polynomial vector
+	fields, where X is a vector field of degree zero (i.e. linear) and
+	in nondiagonal Jordan normal form *)
+
 FieldNilSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 	Module[
-		{DX = Frechet[X,vars], Y, C = Monomials[deg+1,vars], 
+		{DX = Frechet[X,vars], Y, M = Monomials[deg+1,vars], 
 			G, ad, n = Length[vars], i, k},
 		G = unify[F,n];
 		ad[f_] := ad[f] = Module[
@@ -368,9 +375,9 @@ FieldNilSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 			unify[DX.g - Frechet[g,vars].X, n]
 		];
 		For[k = n, k >= 1, k--,
-			For[i = 1, i <= Length[C], i++,
-				Y[i,k] = diagSolve[
-					Coefficient[G, C[[i]] e[k]] C[[i]], 
+			For[i = 1, i <= Length[M], i++,
+				Y[i,k] = FieldNilSolveAux[
+					Coefficient[G, M[[i]] e[k]] M[[i]], 
 					vars, L, k, zero
 				];
 				G = Expand[G - ad[Y[i,k] e[k]]];
@@ -378,21 +385,20 @@ FieldNilSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 		];
 		{
 			listify[G, n],
-			listify[Sum[Sum[Y[i,k] e[k], {i,1,Length[C]}], {k,1,n}], n]
+			listify[Sum[Sum[Y[i,k] e[k], {i,1,Length[M]}], {k,1,n}], n]
 		}
 	]
 
-diagSolve[0, _List, _List, _Integer, _] := 0
+FieldNilSolveAux[0, _List, _List, _Integer, _] := 0
 
-diagSolve[f_/;(f =!= 0), vars_List, eigs_List, k_Integer, zero_] := 
-Module[
-	{divisor = eigs[[k]] - eigs . Exponent[f,vars]},
-	If[ zero[divisor] == 0,
-		0,
-		f/divisor,
-		f/divisor
+FieldNilSolveAux[f_/;(f =!= 0), vars_List, eigs_List, k_Integer, zero_] := 
+	Module[{divisor = eigs[[k]] - eigs . Exponent[f,vars]},
+		If[ zero[divisor] == 0,
+			0,
+			f/divisor,
+			f/divisor
+		]
 	]
-]
 
 Monomials[0, {x___}] := {1}
 
