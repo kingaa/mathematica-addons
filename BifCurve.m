@@ -6,10 +6,11 @@ BifCurve::usage = "BifCurve[F_, x0_List, varindex_List] continues\
 	the curve defined by the function F (see Funcv)."
 BifCurve::smstp = "At minimum stepsize, no progress made"
 FindTangent::usage = "FindTangent[F_, x0_List, varindx_List, h_]."
-FindTangent::nosol = "Tangent vector could not be found"
+NewtRaph::nosol = "Linear equation with no solution encountered in NewtRaph."
+FindTangent::nosol = "Tangent vector could not be found."
 NewtRaph::usage = "NewtRaph[F, x0, varindx] refines the initial guess x0."
-NewtRaph::div = "Newton-Raphson iterations diverging"
-NewtRaph::incom = "Incommensurate dimensions in NewtRaph"
+NewtRaph::div = "Newton-Raphson iterations diverging."
+NewtRaph::incom = "Incommensurate dimensions in NewtRaph."
 Funcv::usage = "Funcv[f, vars] returns a function suitable for use\
 	as the first argument in BifCurve, NewtRaph, or FindTangent."
 
@@ -37,30 +38,51 @@ Funcv[f_List, x_List] := Module[
 NewtRaph[F_, x0_List, varindx_List, opts___] := Module[
 	{x1=x0, dx, f, df, maxn, tol, traprad},
 	{maxn, tol, traprad} = {MaxIter, NRTol, TrapRad} /. {opts} /. Options[NewtRaph];
+	Off[LinearSolve::nosol];
 	Do[
 		f = F[x1, varindx];
 		df = f[[2]];
 		f = f[[1]];
-		If[ TrueQ[Length[f] =!= Length[varindx]], Message[NewtRaph::incom]; Return[Null]];
+		If[ TrueQ[Length[f] =!= Length[varindx]], 
+			Message[NewtRaph::incom]; 
+			On[LinearSolve::nosol];
+			Return[Null]
+		];
 		dx = LinearSolve[df, f];
+		If [ Head[dx] == LinearSolve, 
+			Message[NewtRaph::nosol];
+			On[LinearSolve::nosol];
+			Throw[Null]
+		];	
 		For[k=1, k <= Length[varindx], k++,
 			x1[[varindx[[k]]]] -= dx[[k]]
 		];
-		If[ TrueQ[Max[Abs[f]] > traprad], Message[NewtRaph::div]; Return[ ]];
-		If[ TrueQ[Max[Abs[dx]] < tol && Max[Abs[f]] < tol], Return[x1]],
-		{maxn}
+		If[ TrueQ[Max[Abs[f]] > traprad], 
+			Message[NewtRaph::div]; 
+			On[LinearSolve::nosol];
+			Return[ ]
+		];
+		If[ 
+			TrueQ[Max[Abs[dx]] < tol && Max[Abs[f]] < tol], 
+			On[LinearSolve::nosol];
+			Return[x1]
+		],
+	{maxn}
 	]
 ]
 
 FindTangent[F_, x0_List, varindx_List, h_] := Module[
 	{G = F[x0, varindx], dg, dx},
+	Off[LinearSolve::nosol];
 	dg = Transpose[ G[[2]] ];
 	dx = LinearSolve[ Transpose[Rest[dg]], - h First[dg]];
 	If [ Head[dx] == LinearSolve, 
 		Message[FindTangent::nosol];
+		On[LinearSolve::nosol];
 		Throw[Null]
 	];
 	dx = Prepend[dx, h];
+	On[LinearSolve::nosol];
 	Return[ reinsert[Array[0&, Length[x0]], dx, varindx] ]
 ]
 	
