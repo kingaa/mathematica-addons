@@ -3,7 +3,7 @@ DeclarePackage["Puiseux`", {"Puiseux"}]
 DeclarePackage["Tr`", {"Tr"}]
 DeclarePackage["Taylor`", 
 	{"Taylor", "TaylorCoeff", "TotalDegree",
-	"InitialForm", "TaylorCompress"}]
+	"InitialForm", "TaylorCompress", "ImplicitSolve"}]
 DeclarePackage["NormalForm`", 
 	{"NormalForm", "ForwardAdjointAction",
 	"BackwardAdjointAction", "FunctionNormalForm",
