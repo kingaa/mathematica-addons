@@ -25,12 +25,12 @@ Begin["Private`"]
 
 Funcv[f_List, x_List] := Module[
 	{df = Transpose[Frechet[f,x]], a, b},
-	a = Compile[x, #]& /@ f;
-	b = Compile[x, #]& /@ df;
+	a = Compile[Evaluate[x], Evaluate[f]];
+	b = Compile[Evaluate[x], #]& /@ df;
 	Function[{val, indx}, 
 		{ 
-			(#[Sequence @@ val]& /@ a),
-			(Transpose[#[Sequence @@ val]& /@ b[[indx]]])
+			(a @@ val),
+			Transpose[(# @@ val)& /@ b[[indx]]]
 		}
 	]
 ]
