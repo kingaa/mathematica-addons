@@ -2,6 +2,9 @@
 
 (*
 	* $Log$
+	* Revision 1.11  2000/08/30 19:57:47  aking
+	* fixed Expon and replaced with Exponential
+	*
 	* Revision 1.10  1998/11/30 23:12:07  aking
 	* Removed Belitskii options.
 	*
@@ -46,7 +49,7 @@ BeginPackage["NormalForm`", {"Frechet`", "Taylor`"}]
 
 Unprotect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
 	BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
-	Jordan, VFTransform, Complexification, Realification, Expon,
+	Jordan, VFTransform, Complexification, Realification, Exponential,
 	Generator, Semisimple, Resonance]
 
 NormalForm::usage = "{Y,U} = NormalForm[X,vars,order] reduces the vector\
@@ -125,8 +128,8 @@ Complexification::usage = "Complexification[w,z] gives the complexifying\
 Realification::usage = "Realification[x,y] gives the realifying\
 	transformation {x + I y, x - I y}."
 
-Expon::usage = "Expon[X, vars, t, n], where X is a vector field in vars,\
-	is Exp[t X] to order n."
+Exponential::usage = "Exponential[X, vars, t, n], where X is a vector\
+	field in vars, is Exp[t X] to order n."
 
 Generator::usage = "Generator[f, vars, n], where f is a formal\
 	diffeomorphism with linear part equal to the identity, is the vector\
@@ -472,19 +475,26 @@ Complexification[w_, z_] := {w/2 + z/2, -I w/2 + I z/2}
 
 Realification[x_, y_] := {x + I y, x - I y}
 
-Expon[X_List, vars_List, t_Symbol, n_Integer] := 
-	Expon[t X, vars, n]
-
-Expon[X_List, vars_List, n_Integer] := Module[
-	{Y = (X . Frechet[#,vars])&},
-	(NestList[Y,#,n]& /@ vars) . Table[(1 / k!), {k,0,n}]
+Exponential[X_List, x_List, t_, n_Integer] := Module[
+	{s},
+	Return[
+		Take[
+			ForwardAction[
+				Append[x,s], 
+				Append[s X, s], 
+				Append[x,s], 
+				n
+			],
+		Length[x]
+		] /. s -> t
+	]
 ]
 
 End[ ]
 
 Protect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
 	BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
-	Jordan, VFTransform, Complexification, Realification, Expon,
+	Jordan, VFTransform, Complexification, Realification, Exponential,
 	Generator, Semisimple, Resonance]
 
 EndPackage[ ]
