@@ -12,6 +12,10 @@ TotalDegree::usage = "TotalDegree[expr, vars] gives the total degree\
 Taylor::usage = "Taylor[expr, vars, n] gives the Taylor polynomial\
 	 of expr in the variables vars to order n."
 
+Taylor::usage = "Taylor[expr, vars, p, n] gives the Taylor\
+	polynomial of expr in the variables vars about the point p \
+	to order n."
+
 Options[Taylor] = {Grading -> 1}
 
 TaylorCoeff::usage = "TaylorCoeff[expr, vars, m] gives the\
@@ -31,6 +35,8 @@ TaylorCompress::usage = "TaylorCompress[expr, vars, n, a] gives the\
 	polynomial of expr[[i]]."
 
 Taylor::badgr = "`1` does not grade the monomials in variables `2`."
+
+Taylor::badp  = "Incommensurate dimensions in Taylor."
 
 Begin["Private`"]
 
@@ -62,9 +68,22 @@ Taylor[f_, x_List, n_Integer] := Module[{eps},
 	]
 ]
 
+Taylor[f_, x_List, p_List, n_Integer] := Module[{eps},
+	Expand[
+		Normal[
+			Series[
+				(f /. Thread[x -> p + eps (x - p)]), 
+				{eps, 0, n}
+			]
+		] /. eps -> 1
+	]
+]
+
 Taylor[f_, x_Symbol, n_Integer] := Taylor[f,{x},n]
 
-Taylor[f_, x_, n_Integer, opts__] := Module[
+Taylor[f_, x_Symbol, p_, n_Integer] := Taylor[f,{x},{p},n]
+
+Taylor[f_, x_List, n_Integer, opts__] := Module[
 	{eps,grade},
 	grade = Grading /. {opts} /. Options[Taylor];
 	If[ (Length[grade] > 1 && Length[grade] != Length[x]),
@@ -75,6 +94,27 @@ Taylor[f_, x_, n_Integer, opts__] := Module[
 		Normal[
 			Series[
 				(f /. Thread[x -> (eps^grade) x]), 
+				{eps, 0, n}
+			]
+		] /. eps -> 1
+	]
+]
+
+Taylor[f_, x_List, p_List, n_Integer, opts__] := Module[
+	{eps, grade},
+	grade = Grading /. {opts} /. Options[Taylor];
+	If[ (Length[x] != Length[p]),
+		Message[Taylor::badp];
+		Return[]
+	];
+	If[ (Length[grade] > 1 && Length[grade] != Length[x]),
+		Message[Taylor::badgr, grade, x];
+		Return[]
+	];
+	Expand[
+		Normal[
+			Series[
+				(f /. Thread[x -> p + (eps^grade) (x - p)]), 
 				{eps, 0, n}
 			]
 		] /. eps -> 1
