@@ -1,4 +1,4 @@
-INSTALLDIR = /usr/local/mathematica/AddOns/Applications
+INSTALLDIR = /usr/local/apps/mathematica/AddOns/Applications
 
 CC = gcc
 CFLAGS = -O2 -I. -Wall -static
