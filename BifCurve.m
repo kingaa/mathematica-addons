@@ -24,8 +24,8 @@ Begin["Private`"]
 
 Funcv[f_List, x_List] := Module[
 	{df = Transpose[Frechet[f,x]], a, b},
-	a = Compile[x, #]& /@ Map[Horner[#,x]&,f];
-	b = Compile[x, #]& /@ Map[Horner[#,x]&,df,{2}];
+	a = Compile[x, #]& /@ f;
+	b = Compile[x, #]& /@ df;
 	Function[{val, indx}, 
 		{ 
 			(#[Sequence @@ val]& /@ a),
