@@ -10,11 +10,9 @@ TotalDegree::usage = "TotalDegree[expr, vars] gives the total degree\
 	 its variables."
 
 Taylor::usage = "Taylor[expr, vars, n] gives the Taylor polynomial\
-	 of expr in the variables vars to order n."
-
-Taylor::usage = "Taylor[expr, vars, p, n] gives the Taylor\
-	polynomial of expr in the variables vars about the point p \
-	to order n."
+	 of expr in the variables vars to order n.  Taylor[expr, vars, p, n]\
+	gives the Taylor polynomial of expr in the variables vars about the\
+	point p to order n."
 
 Options[Taylor] = {Grading -> 1}
 
