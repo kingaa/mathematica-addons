@@ -100,6 +100,7 @@ NormalForm[X_List, vars_List, order_Integer, opts___] := Module[
 	{lieSolve, form, zeroTest},
 	If[ Length[X] != Length[vars], 
 		Message[NormalForm::shape, Length[X], Length[vars]];
+		Return[$Failed]
 	];
 	zeroTest = ResonanceTest /. {opts} /. Options[NormalForm];
 	form = Form /. {opts} /. Options[NormalForm];
@@ -153,9 +154,11 @@ ForwardAdjointAction[X_List, Y_List, vars_List, order_Integer] :=
 	Module[{F,Xe,Ye,U,eps},
 		If[Length[X] != Length[vars],
 			Message[NormalForm::shape, Length[X], Length[vars]];
+			Return[$Failed]
 		];
 		If[Length[Y] != Length[vars],
 			Message[NormalForm::shape, Length[Y], Length[vars]];
+			Return[$Failed]
 		];
 		Xe = Expand[X /. Thread[vars -> eps vars]];
 		Ye = Expand[Y /. Thread[vars -> eps vars]];
@@ -178,9 +181,11 @@ BackwardAdjointAction[X_List, Y_List, vars_List, order_Integer] :=
 	Module[{F,Xe,Ye,U,eps},
 		If[Length[X] != Length[vars],
 			Message[NormalForm::shape, Length[X], Length[vars]];
+			Return[$Failed]
 		];
 		If[Length[Y] != Length[vars],
 			Message[NormalForm::shape, Length[Y], Length[vars]];
+			Return[$Failed]
 		];
 		Xe = Expand[X /. Thread[vars -> eps vars]];
 		Ye = Expand[Y /. Thread[vars -> eps vars]];
@@ -201,13 +206,11 @@ BackwardAdjointAction[X_List, Y_List, vars_List, order_Integer] :=
 			G = ForwardAction[F,Y,x,order], then
 				G(x,e) = F(y(x,e),e).                            *)
 
-ForwardAction[X_List, Y_List, vars_List, order_Integer] :=
+ForwardAction[X_, Y_List, vars_List, order_Integer] :=
 	 Module[{F,Xe,Ye,U,eps},
-		If[Length[X] != Length[vars],
-			Message[NormalForm::shape, Length[X], Length[vars]];
-		];
 		If[Length[Y] != Length[vars],
 			Message[NormalForm::shape, Length[Y], Length[vars]];
+			Return[$Failed]
 		];
 		Xe = Expand[X /. Thread[vars -> eps vars]];
 		Ye = Expand[Y /. Thread[vars -> eps vars]];
@@ -229,13 +232,11 @@ ForwardAction[X_List, Y_List, vars_List, order_Integer] :=
 		G = BackwardAction[F,Y,x,order], then
 					F(x,e) = G(y(x,e),e).                          *)
 
-BackwardAction[X_List, Y_List, vars_List, order_Integer] :=
+BackwardAction[X_, Y_List, vars_List, order_Integer] :=
 	 Module[{F,Xe,Ye,U,eps},
-		If[Length[X] != Length[vars],
-			Message[NormalForm::shape, Length[X], Length[vars]];
-		];
 		If[Length[Y] != Length[vars],
 			Message[NormalForm::shape, Length[Y], Length[vars]];
+			Return[$Failed]
 		];
 		Xe = Expand[X /. Thread[vars -> eps vars]];
 		Ye = Expand[Y /. Thread[vars -> eps vars]];
@@ -257,6 +258,7 @@ Generator[f_List, vars_List, n_Integer] := Module[
 	{Y, eps, fe},
 	If[ Length[f] != Length[vars], 
 		Message[NormalForm::shape, Length[f], Length[vars]];
+		Return[$Failed]
 	];
 	fe = f /. Thread[vars -> eps vars];
 	Y[0, k_Integer] := Y[0,k] = (k+1)! Coefficient[fe, eps, k+2];
@@ -282,9 +284,11 @@ Jordan[X_List, oldvars_List, newvars_List] := Module[
 		S, T, f, g, Y},
 	If[Length[X] != Length[oldvars],
 		Message[NormalForm::shape, Length[X], Length[oldvars]];
+		Return[$Failed]
 	];
 	If[Length[X] != Length[newvars],
 		Message[NormalForm::shape, Length[X], Length[newvars]];
+		Return[$Failed]
 	];
 	S = First[JordanDecomposition[A]];
 	T = Inverse[S];
