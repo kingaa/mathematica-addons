@@ -2,6 +2,10 @@
 
 (*
 	* $Log$
+	* Revision 1.8  1998/05/19 21:31:17  aking
+	* Added FieldBelSolve predicate in preliminary form.
+	* Some cosmetic changes.
+	*
 	* Revision 1.7  1998/05/19 17:05:14  aking
 	* Replaced old NormalForm predicate with NormalFormAux.
 	* NormalForm now handles errors and options and calls NormalFormAux.
@@ -399,8 +403,8 @@ FieldSSSolveAux[eigs_List, a_, vars_, lambda_, zero_] :=
 FieldNilSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
 	Module[
 		{DX = Transpose[Frechet[X,vars]], M = monoms[deg+1,vars], 
-			G = F, n = Length[vars], Y, m, i, k},
-		m = Length[M];
+			G = F, Y, m, n, i, k},
+		n = Length[vars]; m = Length[M];
 		For[k = n, k >= 1, k--,
 			For[i = 1, i <= m, i++,
 				Y[i,k] = FieldNilSolveAux[
@@ -418,6 +422,39 @@ FieldNilSolveAux[0, _List, _List, _Integer, _] := 0
 
 FieldNilSolveAux[f_/;(f =!= 0), vars_List, eigs_List, k_Integer, zero_] := 
 	Module[{divisor = eigs[[k]] - eigs . Exponent[f,vars]},
+		If[ zero[divisor] == 0,
+			0,
+			f/divisor,
+			f/divisor
+		]
+	]
+
+(* Solve [X,Y] + G = F in the space of homogeneous polynomial vector
+	fields, where X is a vector field of degree zero (i.e. linear) and
+	in not-necessarily-diagonal Jordan normal form and F is resonant. *)
+
+FieldBelSolve[X_List, L_List, F_List, vars_List, deg_Integer, zero_] :=
+	Module[
+		{DX = Transpose[Frechet[X,vars]], M = monoms[deg+1,vars], 
+			G = F, Y, m, n},
+		n = Length[vars]; m = Length[M];
+		For[k = 1, k <= n, k++,
+			For[i = m, i >= 1, i--,
+				Y[i,k] = FieldBelSolveAux[
+					Coefficient[G[[k]], M[[i]]] M[[i]], 
+					vars, L, k, zero
+				];
+				G -= DX[[k]] Y[i,k];
+				G[[k]] += Frechet[Y[i,k],vars] . X;
+			]
+		];
+		{G, Table[Sum[Y[i,k], {i,1,m}], {k,1,n}]}
+	]
+
+FieldBelSolveAux[0, _List, _List, _Integer, _] := 0
+
+FieldBelSolveAux[f_/;(f =!= 0), vars_List, eigs_List, k_Integer, zero_] := 
+	Module[{divisor = 0},
 		If[ zero[divisor] == 0,
 			0,
 			f/divisor,
@@ -484,7 +521,7 @@ resTest[X_List, vars_List] := Module[
 	{DX = Frechet[Taylor[X,vars,1],vars], n = Length[vars], S},
 	S = Array[0&, {n,n}];
 	Do[ S[[i,i]] = DX[[i,i]], {i,1,n}];
-	And @@ (TrueQ /@ Thread[Expand[LieBracket[S . vars, X, vars]] == 0])
+	And @@ (TrueQ[# == 0]& /@ Expand[LieBracket[S . vars, X, vars]])
 ]
 
 End[ ]
