@@ -1,6 +1,6 @@
 (* -*- mode: math; tab-width: 3; -*- *)
 
-BeginPackage["BifCurve`", {"Frechet`", "NumericalMath`Horner`"}]
+BeginPackage["BifCurve`", {"Frechet`", "Algebra`Horner`"}]
 
 BifCurve::usage = "BifCurve[F_, x0_List, varindex_List] continues\
 	the curve defined by the function F (see Funcv)."

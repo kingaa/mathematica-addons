@@ -19,6 +19,6 @@ DeclarePackage["Ideal`",
 DeclarePackage["WriteBin`", {"WriteBin"}]
 DeclarePackage["Dlivr`", {"Dlivr"}]
 DeclarePackage["Graphics`ImplicitPlot`", {"ImplicitPlot"}]
-DeclarePackage["NumericalMath`Horner`", {"Horner"}]
+DeclarePackage["Algebra`Horner`", {"Horner"}]
 DeclarePackage["Algebra`SymmetricPolynomials`", 
 	{"SymmetricPolynomial", "SymmetricReduction"}]
