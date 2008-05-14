@@ -8,7 +8,7 @@ BeginPackage["Taylor`"]
 
 Unprotect[TotalDegree, Taylor, TaylorCoeff, InitialForm, Grading, TaylorCompress, ImplicitSolve]
 
-TotalDegree::usage = "TotalDegree[expr, vars] gives the total degree of the polynomial expression expr in the variables vars.  	 TotalDegree[expr] gives the total degree of the polynomial expr in its variables."
+TotalDegree::usage = "TotalDegree[expr, vars] gives the total degree of the polynomial expression expr in the variables vars.  TotalDegree[expr] gives the total degree of the polynomial expr in its variables."
 
 Taylor::usage = "Taylor[expr, vars, n] gives the Taylor polynomial of expr in the variables vars to order n.  Taylor[expr, vars, p, n] gives the Taylor polynomial of expr in the variables vars about the point p to order n."
 
