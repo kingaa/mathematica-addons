@@ -1,13 +1,13 @@
 (* -*- mode: math; tab-width: 3; -*- *)
-
+(* This is the package Frechet. *)
+(* Author: Aaron A. King <king at umich dot edu> *)
+(* $Revision$ *)
+(* $Date$ *)
 BeginPackage["Frechet`"]
 
 Unprotect[Frechet]
 
-Frechet::usage = "Frechet[exprs,vars] returns the Frechet derivative\
-	of the list of expressions exprs with respect to the variables vars.\
-	Frechet[exprs,vars,vars] returns the second differential,\
-	Frechet[exprs,vars,vars,vars] the third, etc."
+Frechet::usage = "Frechet[exprs,vars] returns the Frechet derivative of the list of expressions exprs with respect to the variables vars.  Frechet[exprs,vars,vars] returns the second differential, Frechet[exprs,vars,vars,vars] the third, etc."
 
 Begin["Private`"]
 

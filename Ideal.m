@@ -1,4 +1,8 @@
 (* -*- mode: math; tab-width: 3; -*- *)
+(* This is the package Ideal for computational algebraic geometry. *)
+(* Author: Aaron A. King <king at umich dot edu> *)
+(* $Revision$ *)
+(* $Date$ *)
 
 BeginPackage["Ideal`", {"Taylor`"}]
 

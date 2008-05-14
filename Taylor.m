@@ -1,52 +1,36 @@
 (* -*- mode: math; tab-width: 3; -*- *)
+(* This is the package Taylor for multivariable Taylor series expansions. *)
+(* Author: Aaron A. King <king at umich dot edu> *)
+(* $Revision$ *)
+(* $Date$ *)
 
 BeginPackage["Taylor`"]
 
 Unprotect[TotalDegree, Taylor, TaylorCoeff, InitialForm, Grading, TaylorCompress, ImplicitSolve]
 
-TotalDegree::usage = "TotalDegree[expr, vars] gives the total degree\
-	 of the polynomial expression expr in the variables vars.\
-	 TotalDegree[expr] gives the total degree of the polynomial expr in\
-	 its variables."
+TotalDegree::usage = "TotalDegree[expr, vars] gives the total degree of the polynomial expression expr in the variables vars.  	 TotalDegree[expr] gives the total degree of the polynomial expr in its variables."
 
-Taylor::usage = "Taylor[expr, vars, n] gives the Taylor polynomial\
-	 of expr in the variables vars to order n.  Taylor[expr, vars, p, n]\
-	gives the Taylor polynomial of expr in the variables vars about the\
-	point p to order n."
+Taylor::usage = "Taylor[expr, vars, n] gives the Taylor polynomial of expr in the variables vars to order n.  Taylor[expr, vars, p, n] gives the Taylor polynomial of expr in the variables vars about the point p to order n."
 
 Options[Taylor] = {Grading -> 1}
 
-TaylorCoeff::usage = "TaylorCoeff[expr, vars, m] gives the\
-	 coefficient of expr in variables vars of degree m\
-	 (m is a multi-index)."
+TaylorCoeff::usage = "TaylorCoeff[expr, vars, m] gives the coefficient of expr in variables vars of degree m (m is a multi-index)."
 
-InitialForm::usage = "InitialForm[expr, vars] is the homogeneous\
-	 form of expr in vars of lowest total degree."
+InitialForm::usage = "InitialForm[expr, vars] is the homogeneous form of expr in vars of lowest total degree."
 
-Grading::usage = "Grading is an option for Taylor, TotalDegree,\
-	 and InitialForm."
+Grading::usage = "Grading is an option for Taylor, TotalDegree, and InitialForm."
 
-TaylorCompress::usage = "TaylorCompress[expr, vars, n, a] gives the\
-	Taylor polynomial of expr in the variables vars to order n in terms\
-	of unspecified coefficients with head a.  a[i,{j,k,...}] is the\
-	coefficient of Inner[Power,vars,{j,k,...},Times] in the Taylor\
-	polynomial of expr[[i]]."
+TaylorCompress::usage = "TaylorCompress[expr, vars, n, a] gives the Taylor polynomial of expr in the variables vars to order n in terms of unspecified coefficients with head a.  a[i,{j,k,...}] is the coefficient of Inner[Power,vars,{j,k,...},Times] in the Taylor polynomial of expr[[i]]."
 
 Taylor::badgr = "`1` does not grade the monomials in variables `2`."
 
 Taylor::badp  = "Incommensurate dimensions in Taylor."
 
-ImplicitSolve::usage = "Given an expression f(x,vars), where vars is a
-list of variables, such that f(0,0,...,0) = 0, ImplicitSolve[f, x,
-vars, n] uses the implicit function theorem to return the n-th Taylor
-polynomial of the unique solution of f == 0.  Thus Taylor[f(x,y,z)
-/. ImplicitSolve[f,x,{y,z},3], {y,z}, 3] == 0."
+ImplicitSolve::usage = "Given an expression f(x,vars), where vars is a list of variables, such that f(0,0,...,0) = 0, ImplicitSolve[f, x, vars, n] uses the implicit function theorem to return the n-th Taylor polynomial of the unique solution of f == 0.  Thus Taylor[f(x,y,z) /. ImplicitSolve[f,x,{y,z},3], {y,z}, 3] == 0."
 
-ImplicitSolve::sing = "Singular Jacobian in ImplicitSolve.  A unique
-solution is not guaranteed to exist."
+ImplicitSolve::sing = "Singular Jacobian in ImplicitSolve.  A unique solution is not guaranteed to exist."
 
-ImplicitSolve::nobranch = "No branch of the solution passes through
-the origin."
+ImplicitSolve::nobranch = "No branch of the solution passes through the origin."
 
 Begin["Private`"]
 
