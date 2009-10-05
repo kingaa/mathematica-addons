@@ -1,6 +1,6 @@
 (* -*- mode: math; tab-width: 3; -*- *)
 (* This is the package NormalForm for normal form analysis of vectorfields. *)
-(* Author: Aaron A. King <king at tiem dot utk dot edu> *)
+(* Author: Aaron A. King <kingaa at umich dot edu> *)
 (* $Revision$ *)
 (* $Date$ *)
 
