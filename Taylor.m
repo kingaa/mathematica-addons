@@ -1,8 +1,6 @@
 (* -*- mode: math; tab-width: 3; -*- *)
 (* This is the package Taylor for multivariable Taylor series expansions. *)
 (* Author: Aaron A. King <king at umich dot edu> *)
-(* $Revision$ *)
-(* $Date$ *)
 
 BeginPackage["Taylor`"]
 

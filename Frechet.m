@@ -1,8 +1,7 @@
 (* -*- mode: math; tab-width: 3; -*- *)
 (* This is the package Frechet. *)
 (* Author: Aaron A. King <king at umich dot edu> *)
-(* $Revision$ *)
-(* $Date$ *)
+
 BeginPackage["Frechet`"]
 
 Unprotect[Frechet]
