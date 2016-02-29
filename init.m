@@ -15,9 +15,3 @@ DeclarePackage["Ideal`",
 	"Dehomogeneize", "GeneralPolynomial", "StandardBasis",
 	"TangentCone", "BlockDiagonal", "GrevLex", "GrLex", "Lex",
 	"Elim", "Discriminant"}] 
-DeclarePackage["WriteBin`", {"WriteBin"}]
-DeclarePackage["Dlivr`", {"Dlivr"}]
-DeclarePackage["Graphics`ImplicitPlot`", {"ImplicitPlot"}]
-DeclarePackage["Algebra`Horner`", {"Horner"}]
-DeclarePackage["Algebra`SymmetricPolynomials`", 
-	{"SymmetricPolynomial", "SymmetricReduction"}]
