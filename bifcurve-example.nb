@@ -1,0 +1,379 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     12541,        370]
+NotebookOptionsPosition[     10350,        301]
+NotebookOutlinePosition[     11404,        332]
+CellTagsIndexPosition[     11180,        325]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<BifCurve`\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.4187414664063063`*^9, 3.418741469643098*^9}, {
+  3.4187421565205727`*^9, 3.4187421622586327`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "Funcv"}]], "Input",
+ CellChangeTimes->{{3.418741473736491*^9, 3.418741474794217*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"Funcv[f, vars] returns a function suitable for use as the \
+first argument in BifCurve, NewtRaph, or FindTangent.\"\>", "MSG"]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.665748589248033*^9},
+ CellTags->"Info-95a68c25-3310-4d21-95e9-a613189ab44c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "NewtRaph"}]], "Input",
+ CellChangeTimes->{{3.418741534996698*^9, 3.418741536797104*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"NewtRaph[F, x0, varindx] refines the initial guess x0.\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6657485899467573`*^9},
+ CellTags->"Info-11b0958e-c0e3-451b-997d-57e53db0170c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Options", "[", "NewtRaph", "]"}]], "Input",
+ CellChangeTimes->{{3.418742511771019*^9, 3.4187425146005793`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"MaxIter", "\[Rule]", "20"}], ",", 
+   RowBox[{"NRTol", "\[Rule]", 
+    FractionBox["1", "10000000"]}], ",", 
+   RowBox[{"TrapRad", "\[Rule]", "1000"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.418742514916367*^9, 3.665748590040975*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "BifCurve"}]], "Input",
+ CellChangeTimes->{{3.418741578165596*^9, 3.418741579924584*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"BifCurve[F_, x0_List, varindex_List] continues the curve \
+defined by the function F (see Funcv).\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.665748590204598*^9},
+ CellTags->"Info-bffa70bc-6072-4050-9143-0793825d90d4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Options", "[", "BifCurve", "]"}]], "Input",
+ CellChangeTimes->{{3.418742491639183*^9, 3.4187424959180326`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"TryStep", "\[Rule]", "0.01`"}], ",", 
+   RowBox[{"MinStep", "\[Rule]", "1.`*^-6"}], ",", 
+   RowBox[{"MaxStep", "\[Rule]", "1.`"}], ",", 
+   RowBox[{"NSteps", "\[Rule]", "1000"}], ",", 
+   RowBox[{"IncrFactor", "\[Rule]", "1.1`"}], ",", 
+   RowBox[{"DecrFactor", "\[Rule]", "3.`"}], ",", 
+   RowBox[{"TrapFactor", "\[Rule]", "2"}], ",", 
+   RowBox[{"Window", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "\[Infinity]"}], ",", "\[Infinity]"}], "}"}], "}"}]}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.418742496258565*^9, 3.665748590295648*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "Do continuation on the equation ",
+ StyleBox["x (1-x) + a = 0.",
+  FontSlant->"Italic"],
+ "  First, compile the function, deciding on the ordering of the variables:"
+}], "Text",
+ CellChangeTimes->{{3.418742889957555*^9, 3.418742919557206*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"f", "=", 
+   RowBox[{"Funcv", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"x", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", "x"}], ")"}]}], "+", "a"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "a"}], "}"}]}], "]"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.418742247085648*^9, 3.4187422569748793`*^9}, 
+   3.418742292987729*^9}],
+
+Cell[TextData[{
+ "Hold the first variable (",
+ StyleBox["x",
+  FontSlant->"Italic"],
+ ") fixed at -2.  Do Newton-Raphson on the second variable (",
+ StyleBox["a",
+  FontSlant->"Italic"],
+ ") to make the given function vanish.  Use initial guess ",
+ StyleBox["a = 0. ",
+  FontSlant->"Italic"],
+ " Return the ordered pair {x,a}."
+}], "Text",
+ CellChangeTimes->{{3.418742314581353*^9, 3.418742350999106*^9}, {
+  3.418742750694688*^9, 3.418742792270032*^9}, {3.418742842308374*^9, 
+  3.418742850083117*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"NewtRaph", "[", 
+  RowBox[{"f", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "2"}], ",", "0"}], "}"}], ",", 
+   RowBox[{"{", "2", "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.418741540831751*^9, 3.418741555308708*^9}, 
+   3.4187416493105497`*^9, {3.418741892285823*^9, 3.418741901119583*^9}, {
+   3.418742302072555*^9, 3.418742307507181*^9}, {3.418742371388543*^9, 
+   3.418742387144527*^9}, {3.4187426174042263`*^9, 3.4187426233236237`*^9}, 
+   3.4187426676971607`*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"-", "2"}], ",", "6.`"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.418742308093586*^9, {3.418742372092931*^9, 3.4187423876663637`*^9}, {
+   3.4187426191037073`*^9, 3.418742623581566*^9}, 3.4187426680723867`*^9, 
+   3.6657485907379913`*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ "Do the same thing, but hold the second variable (",
+ StyleBox["a",
+  FontSlant->"Italic"],
+ ") fixed at ",
+ StyleBox["a = 1.",
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.418742314581353*^9, 3.418742335818098*^9}, {
+  3.418742738153364*^9, 3.418742743421261*^9}, {3.4187427982693872`*^9, 
+  3.4187428213842363`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"NewtRaph", "[", 
+  RowBox[{"f", ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", "1", "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.418741540831751*^9, 3.418741555308708*^9}, 
+   3.4187416493105497`*^9, {3.418741892285823*^9, 3.418741901119583*^9}, 
+   3.418742302072555*^9, {3.418742395189754*^9, 3.418742411710601*^9}, {
+   3.4187425844168797`*^9, 3.418742614150017*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"-", "0.6180339887498949`"}], ",", "1"}], "}"}]], "Output",
+ CellChangeTimes->{{3.4187425955252743`*^9, 3.4187426144676523`*^9}, 
+   3.4187428127859364`*^9, 3.66574859082259*^9}]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["Continuation",
+  FontWeight->"Bold"],
+ ".  Take a small step in the direction of the first variable, solve for the \
+second, repeat."
+}], "Text",
+ CellChangeTimes->{{3.418742427574052*^9, 3.4187424562740593`*^9}, {
+  3.418742523620467*^9, 3.418742525748385*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ListPlot", "[", 
+  RowBox[{
+   RowBox[{"X", "=", 
+    RowBox[{"BifCurve", "[", 
+     RowBox[{"f", ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "2"}], ",", "0"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"1", ",", "2"}], "}"}], ",", 
+      RowBox[{"Window", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "5"}], ",", "10"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "10"}], ",", "10"}], "}"}]}], "}"}]}]}], "]"}]}], ",", 
+   RowBox[{"AxesLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<a\>\"", ",", "\"\<x\>\""}], "}"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.4187416077780027`*^9, 3.418741655767601*^9}, {
+   3.418741757548279*^9, 3.418741772162216*^9}, {3.4187419045891647`*^9, 
+   3.418741942966357*^9}, {3.4187419843333387`*^9, 3.4187421019368267`*^9}, {
+   3.418742173510806*^9, 3.4187422206811934`*^9}, 3.418742272306183*^9, {
+   3.418742468677062*^9, 3.418742484721623*^9}, {3.418742541374569*^9, 
+   3.418742576175831*^9}, {3.418742629753998*^9, 3.418742693596921*^9}}],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {{}, 
+    {RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.011000000000000001`],
+      AbsoluteThickness[1.6], PointBox[CompressedData["
+1:eJwBsQNO/CFib1JlAgAAADoAAAACAAAAAAAAAAAAAMAAAAAAAAAYQGt+G8T2
+9/+/N6xyd/X1F0AZnDny6+//v/Eu1fjq6xdAOBvbcBHn/7+Vd3aD3+AXQKa8
+7hdS3f+/DYyJaLnUF0BxYWqNltL/v/zYu2lcxxdA81CyB8XG/79ghd92qbgX
+QP3MnQnBuf+/HSj+ZX6oF0ChA24Wa6v/v1cfSaS1lhdA3iSfXKCb/79sZzTf
+JYMXQKt3TVY6iv+/zcT3pKFtF0CmKbFdDnf/vxyPn/v2VRdA5AfxM+1h/78Z
+WcLt7jsXQOt/O3iiSv+/Df/aC00fF0BgjbIM9DD/v/VIL+HO/xZA/tA9ZqEU
+/79jRBJbK90WQNC9v8Ni9f6/P882IRK3FkDiV29I6NL+v4egqt0qjRZAsXQs
+9Nis/r9VrfRyFF8WQE8KenPRgv6/DoOzHmQsFkDZ00y/YlT+v1XB+Yak9BVA
+guLwghAh/r/nV4mwVLcVQLhbyDtP6P2/dC7z2+ZzFUDb2VoDgqn9v1Xhike/
+KRVAW/HK7/dj/b9VBRHUMtgUQKVN3/DoFv2/KqH3iYV+FED3qbsHcsH8v5zu
+PP3oGxRAAPU3rJBi/L/JZxWOeq8TQCIwBiMd+fu/nJAUhUE4E0BldElxw4P7
+vyTzVAottRJAP1FNefoA+79v1YD4ESUSQLpT3pr4bvq/6EbmjqiGEUAbiZLm
+pMv5v+evhgmK2BBAoIwvfYMU+b8tbFUsLhkQQBqR9/SaRvi/cDrNstGNDkAT
+l2NdT173v/pz+rfPvwxAT+LqRy1X9r9piE9lYsQKQP877jSbK/W/HNb+u0SX
+CEAbpiPtX9Tzv4fPUVjjMwZAJ0Rf8dtH8r9inCHGZpUDQFULus2uePC/x+ZY
+V822AEB+Cl67Qqbsv9naEqxLJvs/XXS2CR1v57+DO51MLEz0P0GxSaB91+C/
+InCaYqa06T+EWioArSXPv6ZklvH7XNM/zL6UnOBF1T+UbtrUcWfMvyL54Hri
+T+o/7A/HGiy1wr9m/D0wd674P1I2moi5yOo/7mr5LVIR/T90gvZ4ir33P/LX
+bSm2wwBAkhDhXNZdAkDtNtS6X+MCQKbRCmsNtQlAZ+u9m6DTBECwuNNZMLIQ
+QHSheoxRlAZAHGtaYhaTFEC7k6aCiDAIQAYKPX7oeRhAzQFpCravCUCeio6B
+x2QcQJrCrb8dFwtAbPlodkspIEBMmVwInmoMQP69jkZQISJAfyTBHSatDUAn
+6MxyNBokQBDJ08Y=
+      "]]}, {}}, {}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{
+    FormBox["\"a\"", TraditionalForm], 
+    FormBox["\"x\"", TraditionalForm]},
+  AxesOrigin->{0, 0},
+  DisplayFunction->Identity,
+  Frame->{{False, False}, {False, False}},
+  FrameLabel->{{None, None}, {None, None}},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{},
+  PlotRange->{{-2., 3.7095453571860726`}, {-0.22190688031411254`, 
+   10.051181399834674`}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.05], 
+     Scaled[0.05]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{{3.418742102876796*^9, 3.418742131847803*^9}, {
+   3.418742174388547*^9, 3.418742221505673*^9}, 3.418742487054489*^9, {
+   3.418742542307404*^9, 3.41874257671489*^9}, {3.418742635183873*^9, 
+   3.4187426408953743`*^9}, {3.4187426801259623`*^9, 3.418742693946151*^9}, 
+   3.6657485917253323`*^9}]
+}, Open  ]]
+},
+WindowSize->{1208, 750},
+WindowMargins->{{477, Automatic}, {Automatic, 35}},
+PrivateNotebookOptions->{"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
+ShowSelection->True,
+FrontEndVersion->"10.2 for Linux x86 (64-bit) (July 29, 2015)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "Info-95a68c25-3310-4d21-95e9-a613189ab44c"->{
+  Cell[882, 31, 280, 5, 62, "Print",
+   CellTags->"Info-95a68c25-3310-4d21-95e9-a613189ab44c"]},
+ "Info-11b0958e-c0e3-451b-997d-57e53db0170c"->{
+  Cell[1319, 45, 224, 4, 62, "Print",
+   CellTags->"Info-11b0958e-c0e3-451b-997d-57e53db0170c"]},
+ "Info-bffa70bc-6072-4050-9143-0793825d90d4"->{
+  Cell[2162, 74, 262, 4, 62, "Print",
+   CellTags->"Info-bffa70bc-6072-4050-9143-0793825d90d4"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"Info-95a68c25-3310-4d21-95e9-a613189ab44c", 10768, 313},
+ {"Info-11b0958e-c0e3-451b-997d-57e53db0170c", 10913, 316},
+ {"Info-bffa70bc-6072-4050-9143-0793825d90d4", 11059, 319}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[545, 20, 195, 3, 45, "Input"],
+Cell[CellGroupData[{
+Cell[765, 27, 114, 2, 45, "Input"],
+Cell[882, 31, 280, 5, 62, "Print",
+ CellTags->"Info-95a68c25-3310-4d21-95e9-a613189ab44c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1199, 41, 117, 2, 45, "Input"],
+Cell[1319, 45, 224, 4, 62, "Print",
+ CellTags->"Info-11b0958e-c0e3-451b-997d-57e53db0170c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1580, 54, 135, 2, 45, "Input"],
+Cell[1718, 58, 287, 7, 65, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2042, 70, 117, 2, 45, "Input"],
+Cell[2162, 74, 262, 4, 62, "Print",
+ CellTags->"Info-bffa70bc-6072-4050-9143-0793825d90d4"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2461, 83, 135, 2, 45, "Input"],
+Cell[2599, 87, 636, 16, 86, "Output"]
+}, Open  ]],
+Cell[3250, 106, 261, 6, 74, "Text"],
+Cell[3514, 114, 407, 13, 45, "Input"],
+Cell[3924, 129, 503, 14, 74, "Text"],
+Cell[CellGroupData[{
+Cell[4452, 147, 506, 11, 45, "Input"],
+Cell[4961, 160, 291, 7, 45, "Output"]
+}, Open  ]],
+Cell[5267, 170, 347, 10, 45, "Text"],
+Cell[CellGroupData[{
+Cell[5639, 184, 431, 9, 45, "Input"],
+Cell[6073, 195, 229, 5, 45, "Output"]
+}, Open  ]],
+Cell[6317, 203, 289, 7, 45, "Text"],
+Cell[CellGroupData[{
+Cell[6631, 214, 1144, 28, 75, "Input"],
+Cell[7778, 244, 2556, 54, 368, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
