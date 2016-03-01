@@ -1,5 +1,12 @@
 # mathematica-addons
-Some useful Mathematica addons
+Some useful Mathematica add-on packages
+
+- `BifCurve` is a package for continuation of bifurcations of equilibria using a locally-parameterized adaptive step, prediction-correction algorithm
+- `NormalForm` computes Poincare normal forms of vectorfields.
+  It also implements `VFTransform`, for transformations of vectorfields.
+- `Frechet` is a simple package implementing a multivariate derivative operator
+- `Taylor` implements a multivariate Taylor expansion
+- `Ideal` implements some important algorithms in computational algebraic geometry
 
 ## Installation Instructions
 
