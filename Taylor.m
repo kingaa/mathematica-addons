@@ -1,4 +1,4 @@
-(* -*- mode: math; tab-width: 3; -*- *)
+(* -*- mode: wolfram; tab-width: 3; -*- *)
 (* This is the package Taylor for multivariable Taylor series expansions. *)
 (* Author: Aaron A. King <kingaa at umich dot edu> *)
 
@@ -33,42 +33,42 @@ ImplicitSolve::nobranch = "No branch of the solution passes through the origin."
 Begin["Private`"]
 
 TotalDegree[f_, x_List] := 
-	Max[Append[Sum[Exponent[f, x[[k]], List], {k,1,Length[x]}],0]]
+   Max[Append[Sum[Exponent[f, x[[k]], List], {k,1,Length[x]}],0]]
 
 TotalDegree[f_] := TotalDegree[f,Variables[f]]
 
 TotalDegree[f_, x_] := Exponent[f,x,Max]
 
 TotalDegree[f_, x_, opts__] := Module[
-	{eps,grade},
-	grade = Grading /. {opts} /. Options[Taylor];
-	If[ (Length[grade] > 1 && Length[grade] != Length[x]),
-		Message[Taylor::badgr, grade, x];
-		Return[]
-	];
-	TotalDegree[f /. Thread[x -> (eps^grade) x], eps]
+   {eps,grade},
+   grade = Grading /. {opts} /. Options[Taylor];
+   If[ (Length[grade] > 1 && Length[grade] != Length[x]),
+      Message[Taylor::badgr, grade, x];
+      Return[]
+   ];
+   TotalDegree[f /. Thread[x -> (eps^grade) x], eps]
 ]
 
 Taylor[f_, x_List, n_Integer] := Module[{eps},
-	Expand[
-		Normal[
-			Series[
-				(f /. Thread[x -> eps x]), 
-				{eps, 0, n}
-			]
-		] /. eps -> 1
-	]
+   Expand[
+      Normal[
+         Series[
+            (f /. Thread[x -> eps x]), 
+            {eps, 0, n}
+         ]
+      ] /. eps -> 1
+   ]
 ]
 
 Taylor[f_, x_List, p_List, n_Integer] := Module[{eps},
-	Expand[
-		Normal[
-			Series[
-				(f /. Thread[x -> p + eps (x - p)]), 
-				{eps, 0, n}
-			]
-		] /. eps -> 1
-	]
+   Expand[
+      Normal[
+         Series[
+            (f /. Thread[x -> p + eps (x - p)]), 
+            {eps, 0, n}
+         ]
+      ] /. eps -> 1
+   ]
 ]
 
 Taylor[f_, x_Symbol, n_Integer] := Taylor[f,{x},n]
@@ -76,91 +76,91 @@ Taylor[f_, x_Symbol, n_Integer] := Taylor[f,{x},n]
 Taylor[f_, x_Symbol, p_, n_Integer] := Taylor[f,{x},{p},n]
 
 Taylor[f_, x_List, n_Integer, opts__] := Module[
-	{eps,grade},
-	grade = Grading /. {opts} /. Options[Taylor];
-	If[ (Length[grade] > 1 && Length[grade] != Length[x]),
-		Message[Taylor::badgr, grade, x];
-		Return[]
-	];
-	Expand[
-		Normal[
-			Series[
-				(f /. Thread[x -> (eps^grade) x]), 
-				{eps, 0, n}
-			]
-		] /. eps -> 1
-	]
+   {eps,grade},
+   grade = Grading /. {opts} /. Options[Taylor];
+   If[ (Length[grade] > 1 && Length[grade] != Length[x]),
+      Message[Taylor::badgr, grade, x];
+      Return[]
+   ];
+   Expand[
+      Normal[
+         Series[
+            (f /. Thread[x -> (eps^grade) x]), 
+            {eps, 0, n}
+         ]
+      ] /. eps -> 1
+   ]
 ]
 
 Taylor[f_, x_List, p_List, n_Integer, opts__] := Module[
-	{eps, grade},
-	grade = Grading /. {opts} /. Options[Taylor];
-	If[ (Length[x] != Length[p]),
-		Message[Taylor::badp];
-		Return[]
-	];
-	If[ (Length[grade] > 1 && Length[grade] != Length[x]),
-		Message[Taylor::badgr, grade, x];
-		Return[]
-	];
-	Expand[
-		Normal[
-			Series[
-				(f /. Thread[x -> p + (eps^grade) (x - p)]), 
-				{eps, 0, n}
-			]
-		] /. eps -> 1
-	]
+   {eps, grade},
+   grade = Grading /. {opts} /. Options[Taylor];
+   If[ (Length[x] != Length[p]),
+      Message[Taylor::badp];
+      Return[]
+   ];
+   If[ (Length[grade] > 1 && Length[grade] != Length[x]),
+      Message[Taylor::badgr, grade, x];
+      Return[]
+   ];
+   Expand[
+      Normal[
+         Series[
+            (f /. Thread[x -> p + (eps^grade) (x - p)]), 
+            {eps, 0, n}
+         ]
+      ] /. eps -> 1
+   ]
 ]
 
 TaylorCoeff[expr_, {x_}, {n_}] := Coefficient[expr, x, n]
 
 TaylorCoeff[expr_, {x_, y___}, {m_, n___}] := 
-	Coefficient[TaylorCoeff[expr, {y}, {n}], x, m]
+   Coefficient[TaylorCoeff[expr, {y}, {n}], x, m]
 
 TaylorCoeff[e_, x_, n_Integer] := TaylorCoeff[e, {x}, {n}]
 
 InitialForm[e_List, x_] := InitialForm[#,x]& /@ e
 
 InitialForm[e_, x_] := Taylor[
-	e, x, -TotalDegree[e,x,Grading -> -1]
+   e, x, -TotalDegree[e,x,Grading -> -1]
 ]
 
 InitialForm[e_, x_, opts__] := Module[
-	{grade,n},
-	grade = Grading /. {opts} /. Options[Taylor];
-	If[ (Length[grade] > 1 && Length[grade] != Length[x]),
-		Message[Taylor::badgr, grade, x];
-		Return[]
-	];
-	n = -TotalDegree[e,x,Grading -> -grade];
-	Taylor[e, x, n, Grading -> grade]
+   {grade,n},
+   grade = Grading /. {opts} /. Options[Taylor];
+   If[ (Length[grade] > 1 && Length[grade] != Length[x]),
+      Message[Taylor::badgr, grade, x];
+      Return[]
+   ];
+   n = -TotalDegree[e,x,Grading -> -grade];
+   Taylor[e, x, n, Grading -> grade]
 ]
 
 TaylorCompress[e_List, x_List, n_Integer, a_, opts___] := Module[
-	{f, g, arules = {}, mi, m = Length[e], s, t},
-	f = Taylor[e, x, n, opts];
-	g = Array[0&, m];
-	For[j = 0, j <= n, j++,
-		mi = multiIndices[j, Length[x]];
-		For[k = 1, k <= Length[mi], k++,
-			t = Together[TaylorCoeff[f, x, mi[[k]]]];
-			For[i = 1, i <= m, i++,
-				If[ t[[i]] =!= 0,
-					(	s = a[i,mi[[k]]];
-						g[[i]] += s Inner[Power, x, mi[[k]], Times];
-						arules = Append[arules, s -> t[[i]]];
-					)
-				]
-			]
-		]
-	];
-	{g, arules}
+   {f, g, arules = {}, mi, m = Length[e], s, t},
+   f = Taylor[e, x, n, opts];
+   g = Array[0&, m];
+   For[j = 0, j <= n, j++,
+      mi = multiIndices[j, Length[x]];
+      For[k = 1, k <= Length[mi], k++,
+         t = Together[TaylorCoeff[f, x, mi[[k]]]];
+         For[i = 1, i <= m, i++,
+            If[ t[[i]] =!= 0,
+               (  s = a[i,mi[[k]]];
+                  g[[i]] += s Inner[Power, x, mi[[k]], Times];
+                  arules = Append[arules, s -> t[[i]]];
+               )
+            ]
+         ]
+      ]
+   ];
+   {g, arules}
 ]
-		
+      
 TaylorCompress[e_, x_List, n_Integer, a_, opts___] := Module[
-	{P = TaylorCompress[{e}, x, n, a, opts]},
-	{P[[1,1]], P[[2]]}
+   {P = TaylorCompress[{e}, x, n, a, opts]},
+   {P[[1,1]], P[[2]]}
 ]
 
 multiIndices[order_Integer, 1] := {{order}}
@@ -168,32 +168,32 @@ multiIndices[order_Integer, 1] := {{order}}
 multiIndices[0, n_Integer] := {Array[0&, n]}
 
 multiIndices[order_Integer/;(order > 0), n_Integer/;(n > 1)] := Apply[
-	Join,
-	Table[
-		Append[#,i]& /@ multiIndices[order-i, n-1],
-		{i,0,order}
-	]
+   Join,
+   Table[
+      Append[#,i]& /@ multiIndices[order-i, n-1],
+      {i,0,order}
+   ]
 ]
 
 ImplicitSolve[f_, x_, vars_List, n_Integer] := Module[
-	{m = Length[vars], eqn, g, clist, xvars}, 
-	g = f /. x -> 0 /. Thread[vars -> 0];
-	If[
-		Not[ g == 0 ],
-		Message[ImplicitSolve::nobranch];
-		Return[$Failed]
-	];
-	If[
-		Coefficient[f /. Thread[vars] -> 0, x, 1] == 0,
-		Message[ImplicitSolve::sing];
-		Return[$Failed]
-	];
-	eqn = Taylor[f /. x -> x @@ vars, vars, n] /. x @@ Array[0&, m] -> 0; 
-	g = Taylor[x @@ vars, vars, n] /. x @@ Array[0&, m] -> 0; 
-	clist = Flatten[CoefficientList[eqn, vars]]; 
-	xvars = Cases[Variables[g], Derivative[__][x][__]]; 
-	g = g /. Solve[Thread[clist == 0], xvars]; 
-	Return[Thread[x -> g]]
+   {m = Length[vars], eqn, g, clist, xvars}, 
+   g = f /. x -> 0 /. Thread[vars -> 0];
+   If[
+      Not[ g == 0 ],
+      Message[ImplicitSolve::nobranch];
+      Return[$Failed]
+   ];
+   If[
+      Coefficient[f /. Thread[vars] -> 0, x, 1] == 0,
+      Message[ImplicitSolve::sing];
+      Return[$Failed]
+   ];
+   eqn = Taylor[f /. x -> x @@ vars, vars, n] /. x @@ Array[0&, m] -> 0; 
+   g = Taylor[x @@ vars, vars, n] /. x @@ Array[0&, m] -> 0; 
+   clist = Flatten[CoefficientList[eqn, vars]]; 
+   xvars = Cases[Variables[g], Derivative[__][x][__]]; 
+   g = g /. Solve[Thread[clist == 0], xvars]; 
+   Return[Thread[x -> g]]
 ]
 
 
