@@ -1,4 +1,5 @@
 DeclarePackage["Frechet`", {"Frechet"}]
+DeclarePackage["Trajectory`", {"Trajectory"}]
 DeclarePackage["Puiseux`", {"Puiseux"}]
 DeclarePackage["Taylor`", 
 	{"Taylor", "TaylorCoeff", "TotalDegree",
