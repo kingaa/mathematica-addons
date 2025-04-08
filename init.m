@@ -4,10 +4,12 @@ DeclarePackage["Puiseux`", {"Puiseux"}]
 DeclarePackage["Taylor`", 
 	{"Taylor", "TaylorCoeff", "TotalDegree",
 	"InitialForm", "TaylorCompress", "ImplicitSolve"}]
+DeclarePackage["VFTransform`", 
+	{"VFTransform"}]
 DeclarePackage["NormalForm`", 
 	{"NormalForm", "ForwardAdjointAction",
 	"BackwardAdjointAction", "FunctionNormalForm",
-	"ForwardAction", "BackwardAction", "Jordan", "VFTransform",
+	"ForwardAction", "BackwardAction", "Jordan",
 	"Complexification", "Realification", "Exponential",
 	"LieBracket", "Generator"}]
 DeclarePackage["Ideal`",
