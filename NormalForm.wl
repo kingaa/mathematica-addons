@@ -6,7 +6,7 @@ BeginPackage["NormalForm`", {"Frechet`", "Taylor`"}]
 
 Unprotect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
    BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
-   Jordan, VFTransform, Complexification, Realification, 
+   Jordan, Complexification, Realification,
    Exponential, Generator, Semisimple, Resonance]
 
 
@@ -36,13 +36,11 @@ LieBracket::usage = "LieBracket[X,Y,vars] is the Lie bracket of the vector field
 
 Jordan::usage = "{Y,f,g} = Jordan[X,oldvars,newvars] transforms the vector field X so that its linear part is in Jordan normal form.  Y will be the normalized vector field, f a linear change of variables such that Df . Y = X o f, and g the inverse transformation, i.e., Dg . X = Y o g.  Put another way, (Df.Y) o g = X."
    
-VFTransform::usage = "VFTransform[X,oldvars,f,newvars] transforms the vector field X in oldvars by the coordinate transformation f by means of direct substitution.  Thus, if Y = VFTransform[X,x,f,y], then Y = (D(f^-1).X) o f.  VFTransform[X,oldvars,f,newvars,n] gives the result to order n in newvars.  VFTransform[X,oldvars,f,newvars,t] should be used when the transformation f depends on the independent variable t.  Likewise, VFTransform[X,oldvars,f,newvars,t,n] gives the result of the time-dependent transformation f on the vector field X to order n."
-
 Complexification::usage = "Complexification[w,z] gives the complexifying transformation {(w + z)/2, -I (w - z)/2}, where z is to be interpreted as Conjugate[w]."
 
 Realification::usage = "Realification[x,y] gives the realifying transformation {x + I y, x - I y}."
 
-Exponential::usage = "Exponential[X, vars, t, n], where X is a vector field in vars, is Exp[t X] to order n."
+Exponential::usage = "Exponential[X, vars, n], where X is a vector field in vars, is Exp[X] to order n."
 
 Generator::usage = "Generator[f, vars, n], where f is a formal diffeomorphism with linear part equal to the identity, is the vector field in vars which generates f."
 
@@ -253,36 +251,6 @@ Jordan[X_List, oldvars_List, newvars_List] := Module[
    {Y, f, g}
 ]
 
-(* If Y = VFTransform[X,old,f,new] then Y = ((Df^-1).X) /. Thread[old -> f].
-   If Y = VFTransform[X,old,f,new.n] then Y = ((Df^-1).X) /. Thread[old -> f]. 
-   truncated to order n in the new variables.                              *)
-
-
-VFTransform[X_List, old_List, sub_List, new_List] := Expand[
-   Inverse[Frechet[sub,new]] . (X /. Thread[old -> sub])
-]
-
-VFTransform[X_List, old_List, sub_List, new_List, order_Integer] := Module[
-   {dsdx, ff, eps},
-   ff = Taylor[X /. Thread[old -> sub], new, order];
-   dsdx = Taylor[Inverse[Frechet[sub,new]], new, order];
-   Taylor[ dsdx . ff, new, order]
-]
-
-VFTransform[X_List, old_List, sub_List, new_List, t_Symbol] := Expand[
-   Inverse[Frechet[sub,new]] . ((X /. Thread[old -> sub]) - D[sub,t])
-]
-
-VFTransform[X_List, old_List, sub_List, new_List, t_Symbol, order_Integer] := 
-   Module[{dsdx, ff, eps},
-      ff = Taylor[X /. Thread[old -> sub], new, order];
-      dsdx = Taylor[Inverse[Frechet[sub,new]], new, order];
-      Taylor[
-         dsdx . ((X /. Thread[old -> sub]) - D[sub,t]),
-         new, order
-      ]
-   ]
-
 (* Solve [X,Y] + G = F in the space of homogeneous polynomial vector
    fields, where X is a vector field of degree zero (i.e. linear) and
    in diagonal form. *)
@@ -389,26 +357,18 @@ Complexification[w_, z_] := {w/2 + z/2, -I w/2 + I z/2}
 
 Realification[x_, y_] := {x + I y, x - I y}
 
-Exponential[X_List, x_List, t_, n_Integer] := Module[
-   {s},
-   Return[
-      Take[
-         ForwardAction[
-            Append[x,s], 
-            Append[s X, s], 
-            Append[x,s], 
-            n
-         ],
-      Length[x]
-      ] /. s -> t
+Exponential[X_List, x_List, n_Integer] :=
+   Module[
+      {L},
+      L[f_] := Frechet[f,x].X;
+      Plus @@ (Table[1/k!,{k,0,n}] NestList[L,x,n])
    ]
-]
 
 End[ ]
 
 Protect[NormalForm, ResonanceTest, Form, ForwardAdjointAction,
    BackwardAdjointAction, ForwardAction, BackwardAction, LieBracket,
-   Jordan, VFTransform, Complexification, Realification, Exponential,
+   Jordan, Complexification, Realification, Exponential,
    Generator, Semisimple, Resonance]
 
 EndPackage[ ]
