@@ -92,7 +92,7 @@ NormalFormAux[X_List, vars_List, order_Integer, lieSolve_, zeroTest_] := Block[
       ];
       {
          Expand[ Sum[ F[i,0] / i!, {i,0,order-1}] ],
-         Expand[ Sum[ Y[i] / (i+1)!, {i,0,order-2}] ]
+         Expand[ Sum[ Y[i] / i!, {i,0,order-2}] ]
       }
    ]
 ]
@@ -115,7 +115,7 @@ ForwardAdjointAction[X_List, Y_List, vars_List, order_Integer] :=
       ];
       Xe = Expand[X /. Thread[vars -> eps vars]];
       Ye = Expand[Y /. Thread[vars -> eps vars]];
-      U[i_Integer] := U[i] = (i+1)! Coefficient[Ye, eps, i+2];
+      U[i_Integer] := U[i] = i! Coefficient[Ye, eps, i+2];
       F[i_Integer,0] := F[i,0] = i! Coefficient[Xe, eps, i+1];
       F[i_Integer, m_Integer/;(m > 0)] := F[i,m] = Expand[
          F[i+1,m-1] + Sum[ 
@@ -142,7 +142,7 @@ BackwardAdjointAction[X_List, Y_List, vars_List, order_Integer] :=
       ];
       Xe = Expand[X /. Thread[vars -> eps vars]];
       Ye = Expand[Y /. Thread[vars -> eps vars]];
-      U[i_Integer] := U[i] = (i+1)! Coefficient[Ye, eps, i+2];
+      U[i_Integer] := U[i] = i! Coefficient[Ye, eps, i+2];
       F[0, m_Integer] := F[0,m] = m! Coefficient[Xe, eps, m+1];
       F[i_Integer/;(i > 0), m_Integer] := F[i,m] = Expand[
          F[i-1,m+1] - Sum[ 
@@ -167,7 +167,7 @@ ForwardAction[X_, Y_List, vars_List, order_Integer] :=
       ];
       Xe = Expand[X /. Thread[vars -> eps vars]];
       Ye = Expand[Y /. Thread[vars -> eps vars]];
-      U[i_Integer] := U[i] = (i+1)! Coefficient[Ye, eps, i+2];
+      U[i_Integer] := U[i] = i! Coefficient[Ye, eps, i+2];
       F[i_Integer,0] := F[i,0] = i! Coefficient[Xe, eps, i+1];
       F[i_Integer, m_Integer/;(m > 0)] := F[i,m] = Expand[
          F[i+1,m-1] + Sum[ 
@@ -193,7 +193,7 @@ BackwardAction[X_, Y_List, vars_List, order_Integer] :=
       ];
       Xe = Expand[X /. Thread[vars -> eps vars]];
       Ye = Expand[Y /. Thread[vars -> eps vars]];
-      U[i_Integer] := U[i] = (i+1)! Coefficient[Ye, eps, i+2];
+      U[i_Integer] := U[i] = i! Coefficient[Ye, eps, i+2];
       F[0, m_Integer] := F[0,m] = m! Coefficient[Xe, eps, m+1];
       F[i_Integer/;(i > 0), m_Integer] := F[i,m] = Expand[
          F[i-1,m+1] - Sum[ 
@@ -220,7 +220,7 @@ Generator[f_List, vars_List, n_Integer] := Module[
          Binomial[i-1, j] Frechet[Y[j,k], vars] . Y[i-j-1,0],
          {j,0,i-1}
       ];
-   Expand[Sum[ Y[i,0] / (i+1)!, {i,0,n-2}]]
+   Expand[Sum[ Y[i,0] / i!, {i,0,n-2}]]
 ]
 
 LieBracket[X_List, Y_List, vars_List] := Frechet[Y,vars].X - Frechet[X,vars].Y
