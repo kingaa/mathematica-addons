@@ -32,22 +32,17 @@ ImplicitSolve::nobranch = "No branch of the solution passes through the origin."
 
 Begin["Private`"]
 
-TotalDegree[f_, x_List] := 
-   Max[Append[Sum[Exponent[f, x[[k]], List], {k,1,Length[x]}],0]]
-
-TotalDegree[f_] := TotalDegree[f,Variables[f]]
-
-TotalDegree[f_, x_] := Exponent[f,x,Max]
-
-TotalDegree[f_, x_, opts__] := Module[
+TotalDegree[f_, x_, opts___] := Module[
    {eps,grade},
    grade = Grading /. {opts} /. Options[Taylor];
    If[ (Length[grade] > 1 && Length[grade] != Length[x]),
       Message[Taylor::badgr, grade, x];
       Return[]
    ];
-   TotalDegree[f /. Thread[x -> (eps^grade) x], eps]
+   Exponent[f /. Thread[x -> (eps^grade) x], eps]
 ]
+
+TotalDegree[f_List, args__] := TotalDegree[#,args]& /@ f
 
 Taylor[f_, x_List, n_Integer] := Module[{eps},
    Expand[

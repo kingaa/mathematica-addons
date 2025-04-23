@@ -13,31 +13,31 @@ Begin["Private`"]
 VFTransform[X_List, old_List, sub_List, new_List] :=
    Expand[
       Inverse[Frechet[sub,new]] . (X /. Thread[old -> sub])
-	]
+   ]
 
 VFTransform[X_List, old_List, sub_List, new_List, order_Integer] :=
   Module[
     {dsdx, ff, eps},
-	 ff = Taylor[X /. Thread[old -> sub], new, order];
-	 dsdx = Taylor[Inverse[Frechet[sub,new]], new, order];
-	 Taylor[dsdx . ff, new, order]
+    ff = Taylor[X /. Thread[old -> sub], new, order];
+    dsdx = Taylor[Inverse[Frechet[sub,new]], new, order];
+    Taylor[dsdx . ff, new, order]
   ]
 
 VFTransform[X_List, old_List, sub_List, new_List, t_Symbol] :=
    Expand[
-	   Inverse[Frechet[sub,new]] . ((X /. Thread[old -> sub]) - D[sub,t])
-	]
+      Inverse[Frechet[sub,new]] . ((X /. Thread[old -> sub]) - D[sub,t])
+   ]
 
 VFTransform[X_List, old_List, sub_List, new_List, t_Symbol, order_Integer] := 
    Module[
       {dsdx, ff, eps},
-		ff = Taylor[X /. Thread[old -> sub], new, order];
-		dsdx = Taylor[Inverse[Frechet[sub,new]], new, order];
-		Taylor[
+      ff = Taylor[X /. Thread[old -> sub], new, order];
+      dsdx = Taylor[Inverse[Frechet[sub,new]], new, order];
+      Taylor[
          dsdx . ((X /. Thread[old -> sub]) - D[sub,t]),
-			new, order
-		]
-	]
+         new, order
+      ]
+   ]
 
 End[ ]
 
