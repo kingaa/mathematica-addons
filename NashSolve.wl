@@ -1,4 +1,4 @@
-(* -*- mode: wolfram; tab-width: 3; -*- *)
+(* -*- mode: wolfram; wolfram-indent: 3; -*- *)
 
 (* This is the package NashSolve for computation *)
 (* of Nash equilibria of normal-form games *)

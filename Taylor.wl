@@ -1,4 +1,4 @@
-(* -*- mode: wolfram; tab-width: 3; -*- *)
+(* -*- mode: wolfram; wolfram-indent: 3; -*- *)
 (* This is the package Taylor for multivariable Taylor series expansions. *)
 (* Author: Aaron A. King <kingaa at umich dot edu> *)
 

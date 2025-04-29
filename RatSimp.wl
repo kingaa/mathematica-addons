@@ -1,4 +1,4 @@
-(* -*- mode: wolfram; tab-width: 3; -*- *)
+(* -*- mode: wolfram; wolfram-indent: 3; -*- *)
 
 BeginPackage["RatSimp`"]
 

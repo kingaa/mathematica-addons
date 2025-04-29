@@ -1,4 +1,4 @@
-(* -*- mode: wolfram; tab-width: 3; -*- *)
+(* -*- mode: wolfram; wolfram-indent: 3; -*- *)
 (* This is the package NormalForm for normal form analysis of vectorfields. *)
 (* Author: Aaron A. King <kingaa at umich dot edu> *)
 

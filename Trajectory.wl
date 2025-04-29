@@ -1,4 +1,4 @@
-(* -*- mode: wolfram; tab-width: 3; -*- *)
+(* -*- mode: wolfram; wolfram-indent: 3; -*- *)
 (* This is the package Trajectory. *)
 (* Author: Aaron A. King <king at umich dot edu> *)
 
